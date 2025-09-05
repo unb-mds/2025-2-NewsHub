@@ -2,9 +2,27 @@ import os
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import OperationalError
+from sqlalchemy import text # Importe a função text
 
 # Inicializa a extensão, mas não a conecta a uma aplicação ainda
 db = SQLAlchemy()
+
+# --- Modelos de Dados (representam tabelas no banco) ---
+# Mova os modelos para o escopo global para que o SQLAlchemy os registre.
+class Article(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+
+    def __repr__(self):
+        return f'<Article {self.title}>'
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'<User {self.username}>'
 
 def create_app():
     """Cria e configura uma instância da aplicação Flask."""
@@ -21,23 +39,6 @@ def create_app():
     # Associa a extensão SQLAlchemy com a aplicação
     db.init_app(app)
 
-    # --- Modelos de Dados (representam tabelas no banco) ---
-    class Article(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        title = db.Column(db.String(120), nullable=False)
-        content = db.Column(db.Text, nullable=False)
-
-        def __repr__(self):
-            return f'<Article {self.title}>'
-
-    # NOVO MODELO: User
-    class User(db.Model):
-        id = db.Column(db.Integer, primary_key=True)
-        username = db.Column(db.String(80), unique=True, nullable=False)
-
-        def __repr__(self):
-            return f'<User {self.username}>'
-
     # --- Rotas da API ---
     @app.route('/')
     def hello_world():
@@ -46,15 +47,18 @@ def create_app():
     @app.route('/health-check')
     def health_check():
         try:
-            db.session.execute('SELECT 1')
+            # Envolva a string SQL com a função text()
+            db.session.execute(text('SELECT 1'))
             return jsonify({
                 "status": "ok",
                 "message": "A conexão com o banco de dados PostgreSQL está funcionando!"
             })
-        except OperationalError:
+        except (OperationalError, Exception) as e:
+            # Retorna uma resposta de erro clara em caso de falha
             return jsonify({
                 "status": "error",
-                "message": "Não foi possível conectar ao banco de dados PostgreSQL."
+                "message": "Falha na conexão com o banco de dados.",
+                "details": str(e)
             }), 500
 
     # NOVAS ROTAS: /users
@@ -83,14 +87,14 @@ def create_app():
             # Pode ocorrer um erro se a tabela ainda não existir, por exemplo
             return jsonify({"error": "Erro ao buscar usuários", "details": str(e)}), 500
 
-    # --- Criação das tabelas (se necessário) ---
-    # O contexto da aplicação é necessário para o SQLAlchemy funcionar.
-    with app.app_context():
-        # Esta linha garante que, ao iniciar, TODAS as tabelas
-        # (Article e User) sejam criadas se ainda não existirem.
-        db.create_all()
-
     return app
 
 # Cria a instância da aplicação para que o Gunicorn possa encontrá-la
 app = create_app()
+
+# --- Comando CLI para inicializar o banco de dados ---
+@app.cli.command("init-db")
+def init_db_command():
+    """Cria as tabelas do banco de dados."""
+    db.create_all()
+    print("Banco de dados inicializado e tabelas criadas.")
