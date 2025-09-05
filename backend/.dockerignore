@@ -7,7 +7,7 @@
 # Ignora arquivos de ambiente virtual do Python
 .venv
 venv
-env
+.env
 
 # Ignora cache e arquivos compilados do Python
 __pycache__/

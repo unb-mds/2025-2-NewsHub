@@ -5,3 +5,4 @@ npm-debug.log
 .gitignore
 .vscode/
 .idea/
+.env
