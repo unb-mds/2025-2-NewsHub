@@ -1,0 +1,13 @@
+# Arquivos do Python
+__pycache__/
+*.pyc
+.env
+.venv
+.pytest_cache/
+
+# Arquivos do VSCode
+.vscode/
+
+# Arquivos do Mac
+.DS_Store
+frontend/node_modules/

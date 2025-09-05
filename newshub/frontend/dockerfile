@@ -1,0 +1,29 @@
+# frontend/Dockerfile
+
+# Usamos uma imagem oficial do Node.js (versão LTS Alpine para ser leve)
+FROM node:24.7.0-alpine
+
+# Atualiza os pacotes do sistema para corrigir vulnerabilidades conhecidas
+RUN apk update && apk upgrade
+
+# Define o diretório de trabalho dentro do contêiner
+WORKDIR /app
+
+# Copia os arquivos de definição de dependências
+COPY package*.json ./
+
+# Instala as dependências de forma mais rápida e confiável e limpa o cache para reduzir o tamanho da imagem
+RUN npm ci && npm cache clean --force
+
+# Copia o resto do código-fonte do frontend
+COPY . .
+
+# Cria e utiliza um usuário não-root por segurança
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+USER appuser
+
+# Expõe a porta padrão do Vite para podermos acessá-la de fora
+EXPOSE 5173
+
+# Comando para iniciar o servidor de desenvolvimento
+CMD ["npm", "run", "dev"]

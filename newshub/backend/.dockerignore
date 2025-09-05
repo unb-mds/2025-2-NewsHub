@@ -1,0 +1,21 @@
+# backend/.dockerignore
+
+# Ignora a pasta do Git
+.git
+.gitignore
+
+# Ignora arquivos de ambiente virtual do Python
+.venv
+venv
+env
+
+# Ignora cache e arquivos compilados do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Ignora arquivos de configuração de IDEs
+.vscode/
+.idea/
