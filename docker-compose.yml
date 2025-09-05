@@ -1,7 +1,4 @@
 # docker-compose.yml (versão final)
-
-version: "3.8"
-
 services:
   backend:
     build: ./backend
@@ -9,12 +6,15 @@ services:
     ports:
       - "5001:5000"
     volumes:
-      # Ajuste o volume para mapear para o subdiretório /app/src
+      # 1. Monta o código da aplicação para que o Gunicorn o encontre e para o hot-reload funcionar.
       - ./backend/app:/app/src
+      # 2. Monta todo o projeto na pasta /workspace para que o VS Code possa acessá-lo.
+      - .:/workspace:cached
     environment:
       - DATABASE_URL=postgresql://newshub_user:strong_password@db:5432/newshub_db
-    depends_on:
-      - db
+    depends_on: # Aguarda o banco de dados estar pronto para aceitar conexões
+      db:
+        condition: service_healthy
 
   # NOVO SERVIÇO: FRONTEND
   frontend:
@@ -38,6 +38,11 @@ services:
       - POSTGRES_DB=newshub_db
       - POSTGRES_USER=newshub_user
       - POSTGRES_PASSWORD=strong_password
+    healthcheck: # Verifica se o PostgreSQL está pronto para aceitar conexões
+      test: ["CMD-SHELL", "pg_isready -U newshub_user -d newshub_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     # Não é necessário expor a porta do DB ao host se apenas o backend a acessa,
