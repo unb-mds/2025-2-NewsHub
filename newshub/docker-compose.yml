@@ -9,7 +9,8 @@ services:
     ports:
       - "5001:5000"
     volumes:
-      - ./backend/app:/app
+      # Ajuste o volume para mapear para o subdiretório /app/src
+      - ./backend/app:/app/src
     environment:
       - DATABASE_URL=postgresql://newshub_user:strong_password@db:5432/newshub_db
     depends_on:
