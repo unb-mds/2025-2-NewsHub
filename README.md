@@ -37,13 +37,10 @@ Este é o método mais simples e rápido para ter todo o ambiente (backend, fron
 3.  **Suba os contêineres:**
     Este comando irá construir as imagens do backend e frontend e iniciar todos os serviços em segundo plano (`-d`).
 
-wsl/cmd/poweshell
     ```sh
+    # No Windows (CMD/PowerShell):
     docker-compose up --build -d
-    ```
-
- bash/zsh
-    ```sh
+    # No Linux (Bash/Zsh):
     docker compose up --build -d
     ```
 
