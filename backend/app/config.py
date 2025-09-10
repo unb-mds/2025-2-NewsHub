@@ -20,9 +20,9 @@ def create_app():
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    # Registra a rota de usuario
-    from app.routes.user_routes import user_bp
-    app.register_blueprint(user_bp, url_prefix="/users")
+    # # Registra a rota de usuario
+    # from app.routes.user_routes import user_bp
+    # app.register_blueprint(user_bp, url_prefix="/users")
 
     @app.route("/")
     def home():
