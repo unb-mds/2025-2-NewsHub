@@ -1,17 +1,17 @@
-from app.models.user import User
+from app.models.user import UserEntity
 from app.repositories.user_repository import UserRepository
 
 class UserService:
     @staticmethod
-    def register(data):
+    def register(data: dict) -> UserEntity:
         if UserRepository.find_by_email(data["email"]):
             raise ValueError("E-mail já cadastrado")
 
-        user = User(
-            nome=data["nome"],
+        user = UserEntity(
+            firstName=data["firstName"],
             lastName=data["lastName"],
             email=data["email"],
-            birthdate=data.get("birthdate")  # pode ser opcional
+            birthdate=data.get("birthdate")
         )
         user.set_password(data["senha"])
 

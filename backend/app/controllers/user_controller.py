@@ -1,26 +1,22 @@
 from flask import request, jsonify
 from sqlalchemy.exc import IntegrityError
-from app.models.user import db, User
+from app.services.user_service import UserService
 
-def create_user():
-    data = request.get_json()
-
-    try:
-        user = User(
-            nome=data["nome"],
-            lastName=data["lastName"],
-            email=data["email"],
-            birthdate=data.get("birthdate")
-        )
-        user.set_password(data["senha"])
-
-        db.session.add(user)
-        db.session.commit()
-
-        return jsonify({"message": "Usuário criado com sucesso!"}), 201
-
-    except IntegrityError:
-        db.session.rollback()
-        return jsonify({"error": "E-mail já cadastrado"}), 409
-    except KeyError as e:
-        return jsonify({"error": f"Campo obrigatório ausente: {e}"}), 400
+class UserController:
+    @staticmethod
+    def register():
+        data = request.get_json()
+        try:
+            user = UserService.register(data)
+            return jsonify({
+                "id": user.id,
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "email": user.email
+            }), 201
+        except ValueError as e:
+            return jsonify({"error": str(e)}), 409
+        except IntegrityError:
+            return jsonify({"error": "Erro de integridade no banco"}), 400
+        except KeyError as e:
+            return jsonify({"error": f"Campo obrigatório ausente: {e}"}), 400
