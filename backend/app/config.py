@@ -1,7 +1,6 @@
-# backend/config.py
 import os
 from flask import Flask
-from app.extensions import db, bcrypt, jwt  # IMPORT NECESSÁRIO
+from app.extensions import db, bcrypt, jwt
 
 def create_app():
     app = Flask(__name__)
@@ -9,12 +8,14 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "supersecret")
 
-    db.init_app(app)      # agora db existe
+    db.init_app(app) 
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    # importar modelos para registrar metadata
-    from app.entities import user_entity  # noqa
+    from app.entities import user_entity
+
+    with app.app_context():
+        db.create_all()
 
     # registrar rotas
     from app.routes.user_routes import user_bp
