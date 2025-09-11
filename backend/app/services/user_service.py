@@ -1,18 +1,22 @@
-from app.models.user import UserEntity
+from app.entities.user_entity import UserEntity
 from app.repositories.user_repository import UserRepository
 
 class UserService:
-    @staticmethod
-    def register(data: dict) -> UserEntity:
-        if UserRepository.find_by_email(data["email"]):
+    def __init__(self, repo: UserRepository | None = None):
+        self.repo = repo or UserRepository()
+
+    def register(self, data: dict) -> UserEntity:
+        email = data["email"].strip().lower()
+        if self.repo.find_by_email(email):
             raise ValueError("E-mail já cadastrado")
 
         user = UserEntity(
             firstName=data["firstName"],
             lastName=data["lastName"],
-            email=data["email"],
-            birthdate=data.get("birthdate")
+            email=email,
+            birthdate=data.get("birthdate"),
         )
-        user.set_password(data["senha"])
+        # alinhar com payload do frontend: "password"
+        user.set_password(data["password"])
 
-        return UserRepository.create(user)
+        return self.repo.create(user)
