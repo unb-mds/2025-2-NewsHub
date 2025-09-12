@@ -12,8 +12,7 @@ class UserController:
             user = user_service.register(data)
             return jsonify({
                 "id": user.id,
-                "firstName": user.firstName,
-                "lastName": user.lastName,
+                "full_name": user.full_name,
                 "email": user.email
             }), 201
         except KeyError as e:

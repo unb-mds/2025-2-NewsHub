@@ -1,7 +1,7 @@
 import json
+
 valid_user_data = {
-    "firstName": "Test",
-    "lastName": "User",
+    "full_name": "Test User",
     "email": "test.user@example.com",
     "password": "StrongPassword123"
 }
@@ -16,7 +16,7 @@ def test_register_user_successfully(client):
 
     data = response.get_json()
     assert data['email'] == valid_user_data['email']
-    assert data['firstName'] == valid_user_data['firstName']
+    assert data['full_name'] == valid_user_data['full_name']
     assert 'id' in data
     assert 'password' not in data
     assert 'password_hash' not in data

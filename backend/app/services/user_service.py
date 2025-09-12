@@ -11,8 +11,7 @@ class UserService:
             raise ValueError("E-mail já cadastrado")
 
         user = UserEntity(
-            firstName=data["firstName"],
-            lastName=data["lastName"],
+            full_name=data["full_name"],
             email=email,
             birthdate=data.get("birthdate"),
         )
