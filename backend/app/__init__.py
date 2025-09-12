@@ -1,24 +1,25 @@
+import os
 from flask import Flask
 from app.extensions import db, bcrypt, jwt
 
-def create_app():
+def create_app(config_overrides=None):
     app = Flask(__name__)
-
-    # Config
-    import os
+    
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "supersecret")
+    if config_overrides:
+        app.config.update(config_overrides)
 
-    # Init extensions
-    db.init_app(app)
+    db.init_app(app) 
     bcrypt.init_app(app)
     jwt.init_app(app)
 
-    # Importa modelos para registrar metadata
-    from app.entities import user_entity  # noqa
+    from app.entities import user_entity
 
-    # Blueprints
+    with app.app_context():
+        db.create_all()
+
     from app.routes.user_routes import user_bp
     app.register_blueprint(user_bp, url_prefix="/users")
 

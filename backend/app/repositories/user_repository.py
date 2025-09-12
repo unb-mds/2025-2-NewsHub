@@ -4,7 +4,6 @@ from app.entities.user_entity import UserEntity
 
 class UserRepository:
     def __init__(self, session=None):
-        # permite injetar sessão em testes; padrão usa db.session do app
         self.session = session or db.session
 
     def create(self, user: UserEntity) -> UserEntity:

@@ -13,7 +13,6 @@ class UserService:
         except EmailNotValidError as e:
             raise ValueError(f"Formato de e-mail inválido: {e}") from e
 
-        # 2. Validação de força da senha
         password = data.get("password")
         if not password or len(password) < 8: 
             raise ValueError("A senha deve ter pelo menos 8 caracteres")
