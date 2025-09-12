@@ -10,3 +10,4 @@ flask-cors==6.0.1
 python-dotenv==1.1.1
 flask_bcrypt==1.0.1
 flask-jwt-extended==4.7.1
+email-validator==2.3.0
