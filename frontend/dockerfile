@@ -16,9 +16,10 @@ RUN npm ci && npm cache clean --force
 # Copia o resto do código-fonte do frontend
 COPY . .
 
-# Cria o diretório de cache do Vite e define o usuário 'node' como proprietário.
-# Isso permite que o processo do Vite, rodando como 'node', escreva neste diretório.
-RUN mkdir -p /app/node_modules/.vite && chown -R node:node /app/node_modules/.vite
+# --- LINHA ADICIONADA ---
+# Altera a propriedade de todos os arquivos para o usuário 'node'
+# Isso resolve o problema de permissão ao instalar novas dependências.
+RUN chown -R node:node /app
 
 # Expõe a porta padrão do Vite
 EXPOSE 5173
