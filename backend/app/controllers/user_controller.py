@@ -6,8 +6,7 @@ user_service = UserService()
 
 class UserController:
     @staticmethod
-    def register():
-        data = request.get_json() or {}
+    def register(data):
         try:
             user = user_service.register(data)
             return jsonify({
