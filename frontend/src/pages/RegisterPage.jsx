@@ -6,12 +6,14 @@ function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState(""); // Estado adicionado para confirmação de senha
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [birthdate, setBirthdate] = useState("");
 
   // Estados para feedback da API e validação
   const [message, setMessage] = useState("");
-  const [errors, setErrors] = useState({}); // Mudança de "error" para "errors" para lidar com múltiplos campos
+  // Estado para controlar a cor da mensagem
+  const [isError, setIsError] = useState(false);
+  const [errors, setErrors] = useState({});
 
   // 2. Função de validação do formulário
   const validateForm = () => {
@@ -41,16 +43,15 @@ function RegisterPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Limpa mensagens anteriores
+    // Limpa mensagens e estados anteriores
     setMessage("");
+    setIsError(false); // Reinicia o estado de erro
     setErrors({});
 
-    // Chama a função de validação
     if (!validateForm()) {
-      return; // Se a validação falhar, para o processo de envio
+      return;
     }
 
-    // Monta o corpo da requisição com os dados do estado
     const userData = {
       full_name: fullName,
       email: email,
@@ -59,10 +60,8 @@ function RegisterPage() {
     };
 
     try {
-      // Pega a URL base da variável de ambiente
       const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
-      // Faz a chamada da API
       const response = await fetch(`${apiUrl}/users/register`, {
         method: "POST",
         headers: {
@@ -73,18 +72,21 @@ function RegisterPage() {
 
       const data = await response.json();
 
-      // Lida com a resposta
       if (response.ok) {
-        // A API deve retornar um objeto com a propriedade `full_name`
-        // Exemplo de resposta da API: { "full_name": "Nome Completo do Usuário", "email": "..." }
+        // Se a resposta for OK, define a mensagem e isError como false
         setMessage(`Usuário ${data.full_name} cadastrado com sucesso!`);
+        setIsError(false);
       } else {
+        // Se houver um erro, define a mensagem e isError como true
         setMessage(data.error || "Ocorreu um erro desconhecido.");
+        setIsError(true);
       }
     } catch (err) {
+      // Em caso de falha de conexão, define isError como true
       setMessage(
         "Não foi possível conectar ao servidor. Tente novamente mais tarde."
       );
+      setIsError(true);
     }
   };
 
@@ -114,7 +116,7 @@ function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Digite seu e-mail..."
-                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-300 ease-in-out
+                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-200 ease-in-out
                 focus:border-black focus:ring-black
                 hover:border-black"
                 required
@@ -146,7 +148,7 @@ function RegisterPage() {
                 <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
               )}
             </div>
-            {/* NOVO CAMPO DE DATA DE NASCIMENTO */}
+            {/* Campo data de nascimento*/}
             <div>
               <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
@@ -159,7 +161,7 @@ function RegisterPage() {
                 type="date"
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
-                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-300 ease-in-out
+                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-200 ease-in-out
                 focus:border-black focus:ring-black
                 hover:border-black"
               />
@@ -178,7 +180,7 @@ function RegisterPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Sua senha..."
-                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-300 ease-in-out
+                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-200 ease-in-out
                 focus:border-black focus:ring-black
                 hover:border-black"
                 required
@@ -202,7 +204,7 @@ function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="Confirme sua senha..."
-                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-300 ease-in-out
+                className="mt-1 block w-full border border-gray-300 p-2 shadow-sm transition-colors duration-200 ease-in-out
                 focus:border-black focus:ring-black
                 hover:border-black"
                 required
@@ -222,7 +224,14 @@ function RegisterPage() {
           </form>
 
           {message && (
-            <p className="mt-4 text-center text-green-600">{message}</p>
+            // Classe da cor depende se é erro ou sucesso
+            <p
+              className={`mt-4 text-center text-sm ${
+                isError ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {message}
+            </p>
           )}
           {Object.keys(errors).length > 0 && !message && (
             <p className="mt-4 text-center text-red-600">
