@@ -13,4 +13,18 @@ def register():
 def login():
     return UserController.login()
 
+@user_bp.route("/profile", methods=["GET"])
+@jwt_required()
+def get_profile():
+    return UserController.get_profile()
+
+@user_bp.route("/profile", methods=["PUT"])
+@jwt_required()
+def update_profile():
+    return UserController.update_profile()
+
+@user_bp.route("/profile/password", methods=["PUT"])
+@jwt_required
+def update_my_password():
+    return UserController.update_password()
 

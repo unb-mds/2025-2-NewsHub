@@ -48,3 +48,32 @@ class UserService:
             return access_token
         
         return None
+    
+    def get_profile(self, user_id: int) -> UserEntity | None:
+        return self.repo.find_by_id(user_id)
+    
+    def update_profile(self, user_id: int, data: dict) -> UserEntity:
+        data.pop("email", None)
+        data.pop("password", None)
+        
+        user =self.repo.update(user_id, data)
+        if not user:
+            raise ValueError("Usuário não encontrado")
+        return user
+    
+    def change_password(self, user_id: int, data: dict):
+        old_password = data.get("old_password")
+        new_password = data.get("new_password")
+        
+        if not old_password or not new_password:
+            raise ValueError("Senha antiga e nova são obrigatórias.")
+        
+        if len(new_password) < 8:
+            raise ValueError("A nova senha deve ter pelo menos 8 caracteres.")
+        
+        user = self.repo.find_by_id(user_id)
+        if not user or not user.check_password(old_password):
+            raise ValueError("Senha antiga incorreta.")
+        
+        user.set_password(new_password)
+        self.repo.update(user_id, {})
