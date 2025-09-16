@@ -1,6 +1,7 @@
 from app.entities.user_entity import UserEntity
 from app.repositories.user_repository import UserRepository
-from email_validator import validate_email, EmailNotValidError 
+from email_validator import validate_email, EmailNotValidError
+from flask_jwt_extended import create_access_token 
 
 class UserService:
     def __init__(self, repo: UserRepository | None = None):
@@ -30,5 +31,20 @@ class UserService:
             birthdate=data.get("birthdate"),
         )
         user.set_password(data["password"])
-
+    
         return self.repo.create(user)
+    
+    def login(self, data: dict) -> str | None:
+        email = data.get("email")
+        password = data.get("password")
+
+        if not email or not password:
+            raise ValueError("E-mail e senha são obrigatórios.")
+
+        user = self.repo.find_by_email(email)
+
+        if user and user.check_password(password):
+            access_token = create_access_token(identity=user.id)
+            return access_token
+        
+        return None
