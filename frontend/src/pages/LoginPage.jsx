@@ -95,68 +95,70 @@ function LoginPage() {
             Synapse.
           </h1>
         </div>
-        <div className="w-full max-w-lg ">
+        <div className="w-full max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Campo Email */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-2 top-6 flex items-center pointer-events-none">
-                <img
-                  src="./src/icons/envelope-regular-full.svg"
-                  alt="ícone email"
-                  class="h-5 w-5"
-                />
-              </div>
               <label
                 className="block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="email"
               >
                 Email
-              </label>
-
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Digite seu e-mail..."
-                required
-                className="mt-1 text-[#989898] valid:text-[#111] block w-full border border-gray-300 py-2
+                <div className="relative mt-1">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <img
+                      src="./src/icons/envelope-regular-full.svg"
+                      alt="ícone email"
+                      className="h-5 w-5"
+                    />
+                  </div>
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder=" Digite seu e-mail..."
+                    className="mt-1 block w-full text-[#989898] valid:text-[#111] border border-gray-300 py-2
                  px-8 shadow-sm transition-colors duration-200 ease-in-out
                 focus:border-black focus:ring-black
                 hover:border-black"
-              />
+                    required
+                  />
+                </div>
+              </label>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
             </div>
             {/* Campo de Senha */}
             <div className="relative">
-              <div className="absolute inset-y-0 left-2 top-6 flex items-center pointer-events-none">
-                <img
-                  src="./src/icons/lock-regular-full.svg"
-                  alt="ícone cadeado"
-                  class="h-5 w-5"
-                />
-              </div>
               <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="password"
               >
                 Senha
+                <div className="relative mt-1">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <img
+                      src="./src/icons/lock-regular-full.svg"
+                      alt="ícone user"
+                      class="h-5 w-5"
+                    />
+                  </div>
+                  <input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder=" Sua senha..."
+                    className="mt-1 block w-full border border-gray-300 py-2
+                  px-8 shadow-sm transition-colors duration-200 ease-in-out
+                  focus:border-black focus:ring-black
+                  hover:border-black"
+                    required
+                  />
+                </div>
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Sua senha..."
-                className="mt-1 block w-full border border-gray-300 py-2
-                 px-8 shadow-sm transition-colors duration-200 ease-in-out
-                focus:border-black focus:ring-black
-                hover:border-black 
-                 "
-                required
-              />
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
               )}
