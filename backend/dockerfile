@@ -12,12 +12,15 @@ COPY ./requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copia o seu pacote de aplicação (a pasta local 'app') para dentro do WORKDIR
-# A estrutura dentro do container será /app/app/...
-COPY ./app ./app
+# O conteúdo da pasta 'app' local é copiado para a raiz do WORKDIR (/app).
+COPY ./app .
 
-# Expõe a porta que o Gunicorn irá usar
+# Expõe a porta que o servidor irá usar
 EXPOSE 5000
 
-# Comando para iniciar a aplicação
-# O Gunicorn será executado a partir de /app e encontrará o módulo 'main' dentro do pacote 'app'
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app.main:app"]
+# Configura e inicia o servidor de desenvolvimento do Flask, que é mais adequado
+# para o ambiente de desenvolvimento e possui um hot-reloading mais robusto.
+ENV FLASK_APP=main:app
+ENV FLASK_DEBUG=1
+
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5000"]

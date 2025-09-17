@@ -9,8 +9,15 @@ def create_app():
 
     CORS(app)
     
+    # Carrega a chave secreta do JWT a partir das variáveis de ambiente.
+    # É crucial que esta variável esteja definida no seu ambiente.
+    # O uso de um fallback é removido para garantir que uma chave explícita seja sempre usada.
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_COOKIE_CSRF_PROTECT"] = True
+
 
     # Init extensions
     db.init_app(app)

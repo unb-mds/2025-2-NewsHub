@@ -9,9 +9,12 @@ services:
     ports:
       - "5001:5000"
     volumes:
-      # Ajuste o volume para mapear para o subdiretório /app/src
-      - ./backend/app:/app/src
+      # Mapeia o código-fonte do backend para /app, alinhando com a nova estrutura do Dockerfile
+      # para garantir que o hot-reloading funcione corretamente.
+      - ./backend/app:/app
     environment:
+      # Define a chave secreta do JWT explicitamente para garantir consistência.
+      - JWT_SECRET_KEY=synapse_key_unb_metodos_de_desenvolvimento_de_software
       - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       - db
