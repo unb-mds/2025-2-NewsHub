@@ -1,4 +1,4 @@
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.exc import SQLAlchemyError
 import logging
 
@@ -23,12 +23,12 @@ class UserRepository:
             raise
 
     def find_by_email(self, email: str) -> User | None:
-        stmt = select(UserEntity).filter_by(email=email)
+        stmt = select(UserEntity).where(func.lower(UserEntity.email) == email.lower())
         entity = self.session.execute(stmt).scalar_one_or_none()
         return User.from_entity(entity) if entity else None
     
     def find_by_id(self, user_id: int) -> User | None:
-        stmt = select(UserEntity).filter_by(id=user_id)
+        stmt = select(UserEntity).where(UserEntity.id == user_id)
         entity = self.session.execute(stmt).scalar_one_or_none()
         return User.from_entity(entity) if entity else None
 
