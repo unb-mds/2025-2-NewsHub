@@ -74,7 +74,7 @@ function RegisterPage() {
 
       if (response.ok) {
         // Se a resposta for OK, define a mensagem e isError como false
-        setMessage(`Usuário ${data.full_name} cadastrado com sucesso!`);
+        setMessage(`Usuário cadastrado com sucesso!`);
         setIsError(false);
       } else {
         // Se houver um erro, define a mensagem e isError como true
@@ -101,7 +101,7 @@ function RegisterPage() {
         {/* Container para o "Synapse" - alinhado à esquerda */}
         <div className="w-full max-w-lg text-left">
           <h1 className="mb-10 text-64xl font-bold text-black font-rajdhani">
-            Synapse.
+            Synapse
           </h1>
         </div>
         <div className="w-full max-w-lg">
@@ -159,7 +159,7 @@ function RegisterPage() {
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Digite seu nome..."
                 className="mt-1 block text-[#989898] valid:text-[#111] w-full border border-gray-300 py-2
-                 px-8 shadow-sm transition-colors duration-300 ease-in-out
+                 px-8 shadow-sm transition-colors duration-200 ease-in-out
                 focus:border-black focus:ring-black
                 hover:border-black"
                 required
@@ -296,18 +296,18 @@ function RegisterPage() {
         </div>
       </div>
 
-      {/* Lado direito (design system) */}
-      <div className="hidden lg:flex w-full lg:w-1/2 flex-col items-left justify-center bg-black p-4 sm:p-8 text-white">
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-light leading-none font-rajdhani">
+      {/* Lado direito da tela*/}
+      <div className="flex w-1/2 flex-col items-left justify-center bg-black p-8 text-white">
+        <h2 className="ml-8 text-160xl font-light leading-none font-rajdhani">
           Know
         </h2>
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-light leading-none font-rajdhani">
+        <h2 className="ml-8 text-160xl font-light leading-none font-rajdhani">
           Your
         </h2>
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-light leading-none font-rajdhani">
+        <h2 className="ml-8 text-160xl font-light leading-none font-rajdhani">
           World,
         </h2>
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-bold leading-none font-rajdhani">
+        <h2 className="ml-8 text-160xl font-bold leading-none font-rajdhani">
           Faster.
         </h2>
       </div>

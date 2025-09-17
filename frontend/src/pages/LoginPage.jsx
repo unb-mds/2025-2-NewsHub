@@ -223,16 +223,16 @@ function LoginPage() {
 
       {/* Lado direito (design system) */}
       <div className="hidden lg:flex w-full lg:w-1/2 flex-col items-left justify-center bg-black p-4 sm:p-8 text-white">
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-light leading-none font-rajdhani">
+        <h2 className="ml-8 text-160xl font-light leading-none font-rajdhani">
           Know
         </h2>
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-light leading-none font-rajdhani">
+        <h2 className="ml-8 text-160xl font-light leading-none font-rajdhani">
           Your
         </h2>
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-light leading-none font-rajdhani">
+        <h2 className="ml-8 text-160xl font-light leading-none font-rajdhani">
           World,
         </h2>
-        <h2 className="ml-4 sm:ml-8 text-6xl md:text-8xl lg:text-[10rem] xl:text-[12rem] font-bold leading-none font-rajdhani">
+        <h2 className="ml-8 text-160xl font-bold leading-none font-rajdhani">
           Faster.
         </h2>
       </div>
