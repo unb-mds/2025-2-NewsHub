@@ -1,4 +1,4 @@
-# NewsHub
+# Synapse
 
 NewsHub é um projeto de agregador de notícias desenvolvido para a disciplina de Métodos de Desenvolvimento de Software. A arquitetura é composta por um backend em Flask (Python) e um frontend em React (JavaScript), orquestrados com Docker.
 
