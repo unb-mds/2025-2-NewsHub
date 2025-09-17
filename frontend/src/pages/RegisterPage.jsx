@@ -297,7 +297,7 @@ function RegisterPage() {
       </div>
 
       {/* Lado direito da tela*/}
-      <div className="flex w-1/2 flex-col items-left justify-center bg-black p-8 text-white">
+      <div className="hidden lg:flex w-full lg:w-1/2 flex-col items-left justify-center bg-black p-4 sm:p-8 text-white">
         <h2 className="ml-8 text-160xl font-light leading-none font-rajdhani">
           Know
         </h2>
