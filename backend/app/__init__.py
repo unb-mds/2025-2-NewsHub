@@ -1,5 +1,6 @@
 import os
 from flask import Flask
+from datetime import timedelta
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from app.extensions import db
@@ -18,6 +19,7 @@ def create_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
     app.config["JWT_COOKIE_CSRF_PROTECT"] = True
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 
 
     # Init extensions
