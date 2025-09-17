@@ -58,14 +58,15 @@ function LoginPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(userData),
+        credentials: "include", // Permite que o navegador envie e receba cookies
       });
 
       const data = await response.json();
 
       // Lida com a resposta
       if (response.ok) {
-        // Exemplo de resposta da API: { "token": "...", "user": { "full_name": "...", "email": "..." } }
-        setMessage(`Login bem-sucedido! Bem-vindo, ${data.user.full_name}.`);
+        // O backend retorna os dados do usuário no campo 'data'
+        setMessage(`Login bem-sucedido! Bem-vindo, ${data.data.full_name}.`);
         setIsError(false);
         // Aqui você pode redirecionar o usuário ou salvar o token
       } else {
