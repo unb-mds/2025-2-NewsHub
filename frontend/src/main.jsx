@@ -5,7 +5,8 @@ import "./index.css";
 
 import LoginPage from "./pages/LoginPage";
 import AboutPage from "./pages/AboutPage";
-import RegisterPage from "./pages/RegisterPage"; // <-- 1. IMPORTE A NOVA PÁGINA
+import RegisterPage from "./pages/RegisterPage";
+import AccountPage from "./pages/AccountPage";
 
 // Cria o objeto de configuração do roteador
 const router = createBrowserRouter([
@@ -20,6 +21,10 @@ const router = createBrowserRouter([
   {
     path: "/registrar", // <-- 2. ADICIONE A NOVA ROTA
     element: <RegisterPage />,
+  },
+  {
+    path: "/account", // A URL da página da conta
+    element: <AccountPage />, // Renderiza o componente AccountPage
   },
 ]);
 
