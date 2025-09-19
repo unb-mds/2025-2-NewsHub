@@ -21,3 +21,11 @@ class UserNotFoundError(DomainError):
 class EmailInUseError(DomainError):
     """Lançado quando um e-mail já está em uso por outro usuário."""
     pass
+
+class NewsSourceValidationError(DomainError):
+    def __init__(self, field: str, message: str):
+        super().__init__(f"{field}: {message}")
+
+class NewsValidationError(DomainError):
+    def __init__(self, field: str, message: str):
+        super().__init__(f"{field}: {message}")
