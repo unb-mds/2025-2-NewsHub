@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/HeaderEditAccount";
 
@@ -10,9 +10,9 @@ import CalendarIcon from "../icons/calendar-regular-full.svg";
 function EditAccount() {
   // Estado para os dados do formulário
   const [formData, setFormData] = useState({
-    fullName: "Gustavo da Costa Cintra",
-    email: "gustavo.cintra@email.com",
-    birthdate: "05-04-2004",
+    fullName: "",
+    email: "",
+    birthdate: "",
   });
 
   // Estado para os erros de validação
@@ -21,6 +21,50 @@ function EditAccount() {
   const [message, setMessage] = useState(""); // Mensagem de feedback
   const [isError, setIsError] = useState(false); // Tipo da mensagem (erro ou sucesso)
 
+  // useEffect para buscar os dados do usuário ao carregar o componente
+  useEffect(() => {
+    const fetchUserData = async () => {
+      // Definindo estado de carregamento
+      setLoading(true);
+
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        // Faz a requisição GET para a API
+        const response = await fetch(`${apiUrl}/users/profile`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            // "Authorization": `Bearer ${token}`
+          },
+          credentials: "include", // Adicionado para enviar cookies de autenticação
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Atualizando o estado 'formData' com os dados da API
+          setFormData({
+            fullName: data.data.full_name,
+            email: data.data.email,
+            birthdate: data.data.birthdate,
+          });
+        } else {
+          // Tratamento de erros de resposta da API
+          setMessage(data.error || "Não foi possível carregar os dados.");
+          setIsError(true);
+        }
+      } catch (err) {
+        // Tratamento de erros de conexão
+        setMessage("Erro de conexão. Tente novamente mais tarde.");
+        setIsError(true);
+      } finally {
+        // Finaliza o carregamento
+        setLoading(false);
+      }
+    };
+
+    fetchUserData(); // Chama a função para buscar os dados do usuário ao montar o componente
+  }, []);
   const validateForm = () => {
     const newErrors = {};
 
@@ -41,12 +85,62 @@ function EditAccount() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      alert("Formulário válido! Pronto para ser enviado.");
-      // Aqui você faria a chamada à API para atualizar os dados do usuário.
+    // Limpa estados e mensagens anteriores
+    setMessage("");
+    setIsError(false);
+    setLoading(true);
+
+    // Valida o formulário
+    if (!validateForm()) {
+      setLoading(false);
+      return;
+    }
+
+    // Obtém a URL da API da variável de ambiente
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
+    // Prepara os dados para a API
+    const userData = {
+      full_name: formData.fullName,
+      email: formData.email,
+      birthdate: formData.birthdate,
+    };
+
+    try {
+      // Faz a chamada à API de atualização com o método PATCH
+      const response = await fetch(`${apiUrl}/users/profile`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          // Adicione seu token de autenticação aqui se a API exigir
+          // "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(userData),
+        credentials: "include",
+      });
+
+      const data = await response.json();
+
+      // Gerenciando a resposta da API
+      if (response.ok) {
+        setMessage(`Dados atualizados com sucesso!`);
+        setIsError(false);
+      } else {
+        setMessage(data.error || "Ocorreu um erro desconhecido.");
+        setIsError(true);
+      }
+    } catch (err) {
+      // Tratamento de erros de conexão
+      setMessage(
+        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
+      );
+      setIsError(true);
+    } finally {
+      // Finalizando o estado de carregamento
+      setLoading(false);
     }
   };
 
@@ -176,6 +270,17 @@ function EditAccount() {
               Confirmar
             </button>
           </form>
+
+          {/* Mensagem de feedback para o usuário */}
+          {message && (
+            <p
+              className={`mt-4 text-center text-sm font-montserrat ${
+                isError ? "text-red-600" : "text-green-600"
+              }`}
+            >
+              {message}
+            </p>
+          )}
         </div>
       </div>
     </>
