@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/HeaderEditAccount";
 
 // Importe os ícones que você está usando no formulário
@@ -7,7 +7,17 @@ import UserIcon from "../icons/user-regular-full.svg";
 import EnvelopeIcon from "../icons/envelope-regular-full.svg";
 import CalendarIcon from "../icons/calendar-regular-full.svg";
 
+// Função auxiliar para ler um cookie pelo nome
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 function EditAccount() {
+  // Hook para navegação programática
+  const navigate = useNavigate();
+
   // Estado para os dados do formulário
   const [formData, setFormData] = useState({
     fullName: "",
@@ -110,13 +120,14 @@ function EditAccount() {
     };
 
     try {
-      // Faz a chamada à API de atualização com o método PATCH
-      const response = await fetch(`${apiUrl}/users/profile`, {
-        method: "PATCH",
+      const csrfToken = getCookie("csrf_access_token"); // Pega o token CSRF do cookie
+
+      // Faz a chamada à API de atualização com o método PUT
+      const response = await fetch(`${apiUrl}/users/profile/update`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          // Adicione seu token de autenticação aqui se a API exigir
-          // "Authorization": `Bearer ${token}`
+          "X-CSRF-TOKEN": csrfToken, // Adiciona o header CSRF
         },
         body: JSON.stringify(userData),
         credentials: "include",
@@ -126,8 +137,14 @@ function EditAccount() {
 
       // Gerenciando a resposta da API
       if (response.ok) {
-        setMessage(`Dados atualizados com sucesso!`);
+        setMessage(
+          `Dados atualizados com sucesso! Redirecionando para o login...`
+        );
         setIsError(false);
+        // Pequeno delay para o usuário ver a mensagem e depois redireciona
+        setTimeout(() => {
+          navigate("/"); // Redireciona para a página de login (que está na rota '/')
+        }, 2000); // Atraso de 2 segundos
       } else {
         setMessage(data.error || "Ocorreu um erro desconhecido.");
         setIsError(true);
