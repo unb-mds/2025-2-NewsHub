@@ -83,11 +83,15 @@ class UserController:
             access_token = create_access_token(identity=str(user.id))
             logging.info(f"Token de acesso criado para o usuário ID: {user.id}")
 
+            user_data = {
+                "full_name": user.full_name,
+                "email": user.email,
+            }
             response = jsonify(
                 {
                     "success": True,
                     "message": "Login bem-sucedido.",
-                    "data": None,
+                    "data": user_data,
                     "error": None,
                 }
             )

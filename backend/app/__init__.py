@@ -9,7 +9,14 @@ from app.routes.user_routes import user_bp
 def create_app():
     app = Flask(__name__)
 
-    CORS(app)
+    # Configuração do CORS
+    # origins="http://localhost:5173" -> Permite requisições apenas da origem do frontend
+    # supports_credentials=True -> Permite que o navegador envie cookies e outros cabeçalhos de autenticação
+    CORS(
+        app,
+        origins=["http://localhost:5173"],
+        supports_credentials=True
+    )
     
     # Carrega a chave secreta do JWT a partir das variáveis de ambiente.
     # É crucial que esta variável esteja definida no seu ambiente.
