@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from app.extensions import db
 from app.routes.user_routes import user_bp
+from app.routes.topic_routes import topic_bp
 
 def create_app():
     app = Flask(__name__)
@@ -34,6 +35,7 @@ def create_app():
     jwt = JWTManager(app)
 
     from app.entities import user_entity 
+    from app.entities import topic_entity, user_topic_entity
 
     @app.cli.command("init-db")
     def init_db_command():
@@ -42,6 +44,7 @@ def create_app():
 
     # Blueprints
     app.register_blueprint(user_bp, url_prefix="/users")
+    app.register_blueprint(topic_bp, url_prefix="/topics")
 
     @app.get("/")
     def home():
