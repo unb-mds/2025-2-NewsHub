@@ -25,6 +25,18 @@ class TopicService:
                 raise
         attached = self.users_topics.attach(user_id, created.id)
         return {"topic": created, "attached": attached}
+    
+    def create_topic(self, data: dict) -> Topic:
+        name = (data or {}).get("name")
+        state = (data or {}).get("state", 1)
+        topic = Topic(name=name, state=state)
+        try:
+            created = self.topics.create(topic)
+        except IntegrityError:
+            created = self.topics.find_by_name(topic.name) or None
+            if not created:
+                raise
+        return {"topic": created}
 
     def find_by_user(self, user_id: int):
         ids = self.users_topics.list_user_topic_ids(user_id)
