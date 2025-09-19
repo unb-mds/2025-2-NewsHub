@@ -36,6 +36,9 @@ def create_app():
 
     from app.entities import user_entity 
     from app.entities import topic_entity, user_topic_entity
+    from app.entities import news_entity
+    from app.entities import news_source_entity
+    from app.entities import news_topic_entity
 
     @app.cli.command("init-db")
     def init_db_command():
