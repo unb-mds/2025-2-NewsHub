@@ -3,7 +3,7 @@
 FROM python:3.12-slim
 
 # Define o diretório de trabalho principal
-WORKDIR /app # Este diretório será a raiz do nosso ambiente
+WORKDIR /app
 
 # Copia apenas o arquivo de dependências
 COPY ./requirements.txt .

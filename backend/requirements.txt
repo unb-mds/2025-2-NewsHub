@@ -13,3 +13,5 @@ flask-jwt-extended==4.7.1
 email-validator==2.3.0
 coverage==7.10.6
 pytest-cov==7.0.0
+newspaper3k==0.2.8
+lxml[html_clean]

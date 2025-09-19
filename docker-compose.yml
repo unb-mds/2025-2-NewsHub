@@ -6,16 +6,18 @@ services:
   backend:
     build: ./backend
     container_name: newshub-backend
+    # As variáveis de ambiente são carregadas do arquivo .env na raiz
+    # e passadas explicitamente para o contêiner. Isso evita problemas
+    # de parsing com comentários no arquivo .env e torna as dependências explícitas.
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
+      GNEWS_API_KEY: ${GNEWS_API_KEY}
     ports:
       - "5001:5000"
     volumes:
-      # Mapeia o código-fonte do backend para /app, alinhando com a nova estrutura do Dockerfile
-      # para garantir que o hot-reloading funcione corretamente.
+      # Mapeia toda a pasta do backend para /app para que o hot-reloading funcione.
       - ./backend/app:/app
-    environment:
-      # Define a chave secreta do JWT explicitamente para garantir consistência.
-      - JWT_SECRET_KEY=synapse_key_unb_metodos_de_desenvolvimento_de_software
-      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
       - db
 
