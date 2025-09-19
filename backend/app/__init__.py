@@ -1,6 +1,7 @@
 import os
 from flask import Flask
-from flask_cors import CORS  # <-- 1. IMPORTE O CORS
+from flask_cors import CORS
+from flask_jwt_extended import JWTManager
 from app.extensions import db
 from app.routes.user_routes import user_bp
 
@@ -21,13 +22,12 @@ def create_app():
 
     # Init extensions
     db.init_app(app)
+    jwt = JWTManager(app)
 
-    # Importa modelos para registrar metadata
-    from app.entities import user_entity  # noqa
+    from app.entities import user_entity 
 
     @app.cli.command("init-db")
     def init_db_command():
-        """Cria as tabelas do banco de dados."""
         db.create_all()
         print("Banco de dados inicializado com sucesso.")
 
