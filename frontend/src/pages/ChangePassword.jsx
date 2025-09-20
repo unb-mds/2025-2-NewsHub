@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "../components/HeaderEditAccount";
 
-import LockIcon from "../icons/lock-regular-full.svg"; // Placeholder
+import LockIcon from "../icons/lock-regular-full.svg";
+import SeeEye from "../icons/eye-regular-full.svg";
+import BlockedEye from "../icons/eye-slash-regular-full.svg";
 
 // Função auxiliar para ler um cookie pelo nome
 function getCookie(name) {
@@ -14,12 +16,10 @@ function getCookie(name) {
 function ChangePassword() {
   const navigate = useNavigate();
 
-  // 1. Estado do formulário atualizado para os campos de senha
   const [formData, setFormData] = useState({
     newPassword: "",
     confirmPassword: "",
   });
-  // Estado separado para o email que vai no Header
   const [userEmail, setUserEmail] = useState("");
 
   const [errors, setErrors] = useState({});
@@ -27,7 +27,12 @@ function ChangePassword() {
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
 
-  // useEffect para buscar o email do usuário (para o Header)
+  // 1. NOVO ESTADO para controlar a visibilidade da senha
+  const [showPassword, setShowPassword] = useState({
+    new: false,
+    confirm: false,
+  });
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -48,7 +53,6 @@ function ChangePassword() {
     fetchUserData();
   }, []);
 
-  // 2. Lógica de validação de senha implementada
   const validateForm = () => {
     const newErrors = {};
     const { newPassword, confirmPassword } = formData;
@@ -69,13 +73,19 @@ function ChangePassword() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Função para lidar com a mudança nos inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // 3. Lógica de envio (handleSubmit) atualizada para a senha
+  // 2. NOVA FUNÇÃO para alternar o estado de visibilidade
+  const togglePasswordVisibility = (field) => {
+    setShowPassword((prevState) => ({
+      ...prevState,
+      [field]: !prevState[field],
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -96,9 +106,8 @@ function ChangePassword() {
       const apiUrl = import.meta.env.VITE_API_BASE_URL;
       const csrfToken = getCookie("csrf_access_token");
 
-      // NOTA: O endpoint foi ajustado para um de atualização de senha.
       const response = await fetch(`${apiUrl}/users/password/update`, {
-        method: "PUT", // PUT é mais comum para atualizações
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           "X-CSRF-TOKEN": csrfToken,
@@ -141,7 +150,7 @@ function ChangePassword() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-            {/* 4. Inputs conectados ao estado e exibindo erros */}
+            {/* 3. JSX ATUALIZADO para os inputs */}
             <div className="relative">
               <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
@@ -159,12 +168,23 @@ function ChangePassword() {
                   <input
                     id="newPassword"
                     name="newPassword"
-                    type="password"
+                    type={showPassword.new ? "text" : "password"} // Tipo dinâmico
                     value={formData.newPassword}
                     onChange={handleChange}
                     placeholder="enter your password.."
                     className="mt-1 block text-[#989898] valid:text-[#111] w-full border border-gray-300 py-2 px-9 shadow-sm transition-colors duration-200 ease-in-out focus:border-black focus:ring-black hover:border-black"
                   />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("new")}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  >
+                    <img
+                      src={showPassword.new ? BlockedEye : SeeEye}
+                      alt="Mostrar/Ocultar senha"
+                      className="h-5 w-5"
+                    />
+                  </button>
                 </div>
                 {errors.newPassword && (
                   <p className="mt-1 text-sm text-red-600">
@@ -191,12 +211,23 @@ function ChangePassword() {
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type="password"
+                    type={showPassword.confirm ? "text" : "password"} // Tipo dinâmico
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="enter your password.."
                     className="mt-1 block w-full text-[#989898] valid:text-[#111] border border-gray-300 py-2 px-9 shadow-sm transition-colors duration-200 ease-in-out focus:border-black focus:ring-black hover:border-black"
                   />
+                  <button
+                    type="button"
+                    onClick={() => togglePasswordVisibility("confirm")}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                  >
+                    <img
+                      src={showPassword.confirm ? BlockedEye : SeeEye}
+                      alt="Mostrar/Ocultar senha"
+                      className="h-5 w-5"
+                    />
+                  </button>
                 </div>
                 {errors.confirmPassword && (
                   <p className="mt-1 text-sm text-red-600">
