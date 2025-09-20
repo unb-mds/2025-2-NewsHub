@@ -12,7 +12,9 @@ from app.models.news_source import NewsSource
 from app.models.exceptions import NewsSourceValidationError
 
 
-# TODO: Enviar a header da noticia pra IA para ela criar os topicos da noticia, fazer consultas no banco para topicos mais selecionados e a partir desses topicos, pedir para IA criar palavras chaves para noticias e enviar para o endpoint de search.
+# TODO: Enviar a header da noticia pra IA para ela criar os topicos da noticia (categorizar) e criar na tabela de topicos.
+
+# TODO: fazer consultas no banco para topicos mais selecionados e a partir desses topicos, pedir para IA criar palavras chaves para noticias e enviar para o endpoint de search.
 
 # TODO: Tratar a quantidade de requests que vou fazer para cada topico, enviar um objeto com os topicos e varias informacoes do tipo
 

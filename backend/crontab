@@ -1,0 +1,3 @@
+0 */6 * * * root /usr/local/bin/python -m app.jobs.collect_news >> /var/log/cron.log 2>&1
+
+# O cron exige uma linha em branco no final do arquivo para funcionar corretamente.
