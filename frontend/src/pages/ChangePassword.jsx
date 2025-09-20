@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Header from "../components/HeaderEditAccount";
-
 import LockIcon from "../icons/lock-regular-full.svg";
 import SeeEye from "../icons/eye-regular-full.svg";
 import BlockedEye from "../icons/eye-slash-regular-full.svg";
@@ -21,13 +20,10 @@ function ChangePassword() {
     confirmPassword: "",
   });
   const [userEmail, setUserEmail] = useState("");
-
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isError, setIsError] = useState(false);
-
-  // 1. NOVO ESTADO para controlar a visibilidade da senha
   const [showPassword, setShowPassword] = useState({
     new: false,
     confirm: false,
@@ -57,16 +53,24 @@ function ChangePassword() {
     const newErrors = {};
     const { newPassword, confirmPassword } = formData;
 
-    if (!newPassword) {
-      newErrors.newPassword = "A nova senha é obrigatória.";
-    } else if (newPassword.length < 6) {
-      newErrors.newPassword = "A senha deve ter no mínimo 6 caracteres.";
+    const uppercaseRegex = /[A-Z]/;
+    const lowercaseRegex = /[a-z]/;
+    const numberRegex = /\d/;
+
+    if (
+      newPassword.length < 8 ||
+      !uppercaseRegex.test(newPassword) ||
+      !lowercaseRegex.test(newPassword) ||
+      !numberRegex.test(newPassword)
+    ) {
+      newErrors.newPassword =
+        "A senha deve ter no mínimo 8 caracteres, uma letra maiúscula, uma minúscula e um número.";
     }
 
-    if (!confirmPassword) {
-      newErrors.confirmPassword = "A confirmação de senha é obrigatória.";
-    } else if (newPassword !== confirmPassword) {
-      newErrors.confirmPassword = "As senhas não coincidem.";
+    if (newPassword !== confirmPassword) {
+      if (confirmPassword) {
+        newErrors.confirmPassword = "As senhas não coincidem.";
+      }
     }
 
     setErrors(newErrors);
@@ -78,7 +82,6 @@ function ChangePassword() {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  // 2. NOVA FUNÇÃO para alternar o estado de visibilidade
   const togglePasswordVisibility = (field) => {
     setShowPassword((prevState) => ({
       ...prevState,
@@ -98,15 +101,13 @@ function ChangePassword() {
 
     setLoading(true);
 
-    const passwordData = {
-      password: formData.newPassword,
-    };
+    const passwordData = { new_password: formData.newPassword };
 
     try {
       const apiUrl = import.meta.env.VITE_API_BASE_URL;
       const csrfToken = getCookie("csrf_access_token");
 
-      const response = await fetch(`${apiUrl}/users/password/update`, {
+      const response = await fetch(`${apiUrl}/users/profile/change_password`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -119,8 +120,13 @@ function ChangePassword() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(`Senha atualizada com sucesso!`);
+        setMessage(
+          "Senha atualizada com sucesso! Redirecionando para o login..."
+        );
         setIsError(false);
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } else {
         setMessage(data.error || "Ocorreu um erro desconhecido.");
         setIsError(true);
@@ -150,7 +156,6 @@ function ChangePassword() {
           </div>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-            {/* 3. JSX ATUALIZADO para os inputs */}
             <div className="relative">
               <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
@@ -168,7 +173,7 @@ function ChangePassword() {
                   <input
                     id="newPassword"
                     name="newPassword"
-                    type={showPassword.new ? "text" : "password"} // Tipo dinâmico
+                    type={showPassword.new ? "text" : "password"}
                     value={formData.newPassword}
                     onChange={handleChange}
                     placeholder="enter your password.."
@@ -211,7 +216,7 @@ function ChangePassword() {
                   <input
                     id="confirmPassword"
                     name="confirmPassword"
-                    type={showPassword.confirm ? "text" : "password"} // Tipo dinâmico
+                    type={showPassword.confirm ? "text" : "password"}
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="enter your password.."
