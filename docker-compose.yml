@@ -1,14 +1,7 @@
-# docker-compose.yml (versão final)
-
-version: "3.8"
-
 services:
   backend:
     build: ./backend
     container_name: newshub-backend
-    # As variáveis de ambiente são carregadas do arquivo .env na raiz
-    # e passadas explicitamente para o contêiner. Isso evita problemas
-    # de parsing com comentários no arquivo .env e torna as dependências explícitas.
     environment:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
@@ -16,24 +9,18 @@ services:
     ports:
       - "5001:5000"
     volumes:
-      # Mapeia toda a pasta do backend para /app para que o hot-reloading funcione.
-      - ./backend/app:/app
+      - ./backend:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
-  # NOVO SERVIÇO: FRONTEND
   frontend:
-    # Constrói a imagem a partir do Dockerfile na pasta `./frontend`
     build: ./frontend
     container_name: newshub-frontend
     ports:
-      # Mapeia a porta 5173 (Vite) do contêiner para a 5173 da nossa máquina
       - "5173:5173"
     volumes:
-      # Espelha o código do frontend para ativar o Hot-Reloading
       - ./frontend:/app
-      # Adicionamos um volume anônimo para node_modules para evitar que a pasta local
-      # sobrescreva a que foi instalada dentro do contêiner.
       - /app/node_modules
 
   db:
@@ -45,10 +32,13 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    # Não é necessário expor a porta do DB ao host se apenas o backend a acessa,
-    # mas mantemos para facilitar a depuração com clientes de DB externos.
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
