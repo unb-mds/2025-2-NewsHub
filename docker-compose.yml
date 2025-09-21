@@ -1,38 +1,41 @@
-# docker-compose.yml (versão final)
-
-version: "3.8"
-
 services:
   backend:
     build: ./backend
     container_name: newshub-backend
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
+      GNEWS_API_KEY: ${GNEWS_API_KEY}
     ports:
       - "5001:5000"
     volumes:
-      # Mapeia o código-fonte do backend para /app, alinhando com a nova estrutura do Dockerfile
-      # para garantir que o hot-reloading funcione corretamente.
-      - ./backend/app:/app
-    environment:
-      # Define a chave secreta do JWT explicitamente para garantir consistência.
-      - JWT_SECRET_KEY=synapse_key_unb_metodos_de_desenvolvimento_de_software
-      - DATABASE_URL=postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - ./backend:/app
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
-  # NOVO SERVIÇO: FRONTEND
   frontend:
-    # Constrói a imagem a partir do Dockerfile na pasta `./frontend`
     build: ./frontend
     container_name: newshub-frontend
     ports:
-      # Mapeia a porta 5173 (Vite) do contêiner para a 5173 da nossa máquina
       - "5173:5173"
     volumes:
-      # Espelha o código do frontend para ativar o Hot-Reloading
       - ./frontend:/app
-      # Adicionamos um volume anônimo para node_modules para evitar que a pasta local
-      # sobrescreva a que foi instalada dentro do contêiner.
       - /app/node_modules
+
+  cron:
+    build:
+      context: ./backend
+      dockerfile: dockerfile.cron
+    container_name: newshub-cron
+    environment:
+      DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
+      GNEWS_API_KEY: ${GNEWS_API_KEY}
+    volumes:
+      - ./backend:/app
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:14-alpine
@@ -43,10 +46,13 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    # Não é necessário expor a porta do DB ao host se apenas o backend a acessa,
-    # mas mantemos para facilitar a depuração com clientes de DB externos.
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
 volumes:
   postgres_data:
