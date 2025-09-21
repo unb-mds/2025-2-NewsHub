@@ -1,10 +1,14 @@
 import logging
 import sys
+import os
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+sys.path.insert(0, project_root)
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
-    stream=sys.stdout # Garante que os logs vão para o stdout do container
+    stream=sys.stdout  # Garante que os logs vão para o stdout do container
 )
 
 # TODO: Rodar um For até 100 requisições, essas serão as 100 requisições diárias que nós temos (podento ter até 1000 noticias por dia)
