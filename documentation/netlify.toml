@@ -1,0 +1,23 @@
+[build]
+  command = "yarn build"
+  publish = "public"
+
+[build.environment]
+  HUGO_VERSION = "0.146.4"
+  GO_VERSION = "1.24.2"
+
+[context.production.environment]
+  HUGO_ENV = "production"
+  HUGO_ENABLEGITINFO = "true"
+
+[context.deploy-preview]
+  command = "hugo --gc --minify --buildFuture -b $DEPLOY_PRIME_URL"
+
+[context.branch-deploy]
+  command = "hugo --gc --minify -b $DEPLOY_PRIME_URL"
+
+[context.branch-deploy.environment]
+  HUGO_ENV = "staging"
+
+[[plugins]]
+  package = "netlify-plugin-hugo-cache-resources"
