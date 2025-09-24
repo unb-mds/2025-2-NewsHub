@@ -20,7 +20,8 @@
     "netlify-plugin-hugo-cache-resources": "^0.2.1",
     "postcss": "^8.4.21",
     "postcss-cli": "^10.1.0",
-    "postcss-sass": "^0.5.0"
+    "postcss-sass": "^0.5.0",
+    "sass": "^1.93.2"
   },
   "packageManager": "yarn@1.22.22",
   "scripts": {
