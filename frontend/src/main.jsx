@@ -8,7 +8,6 @@ import AboutPage from "./pages/AboutPage";
 import RegisterPage from "./pages/RegisterPage";
 import EditAccount from "./pages/EditAccount.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
-import RegisterPage from "./pages/RegisterPage";
 import AccountPage from "./pages/AccountPage";
 
 // Cria o objeto de configuração do roteador
