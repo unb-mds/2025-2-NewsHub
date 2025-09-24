@@ -1,11 +1,6 @@
----
-title: "Guia de Execução"
-menu:
-  main:
-    weight: 20
----
+# Como rodar o projeto
 
-Este guia explica como executar o projeto NewsHub, incluindo backend, frontend e banco de dados, tanto via Docker (recomendado) quanto em ambiente local para desenvolvimento.
+Este guia explica como executar o projeto Synapse, incluindo backend, frontend e banco de dados, tanto via Docker (recomendado) quanto em ambiente local para desenvolvimento.
 
 ---
 
