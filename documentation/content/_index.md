@@ -4,44 +4,39 @@ isIndex: true
 draft: false
 ---
 
-# NewsHub
+# Synapse
 
-Bem-vindo à documentação do projeto **NewsHub**!
-
----
-
-## Links Úteis
-
-- [Protótipo no Figma](https://www.figma.com/file/EXEMPLO/NewsHub-Prototipo)  
-- [Documentação Técnica](./guia/)
-- [Repositório no GitHub](https://github.com/unb-mds/NewsHub)
+Bem-vindo à documentação do projeto **Synapse**!  
 
 ---
 
-## Protótipos
+## 🔗 Links Úteis
 
-Confira os protótipos visuais e fluxos de navegação desenvolvidos para o projeto:
-
-- [Protótipo Desktop](https://www.figma.com/file/EXEMPLO/NewsHub-Desktop)
-- [Protótipo Mobile](https://www.figma.com/file/EXEMPLO/NewsHub-Mobile)
-
----
-
-## Autores
-
-| Nome                | GitHub                      | Função/Responsabilidade     |
-|---------------------|-----------------------------|-----------------------------|
-| Arthur Parente      | [ArthurParente](https://github.com/ArthurParente) | Backend, Documentação        |
-| Nome Exemplo 2      | [usuario2](https://github.com/usuario2)           | Frontend, Prototipação       |
-| Nome Exemplo 3      | [usuario3](https://github.com/usuario3)           | DevOps, Banco de Dados       |
+- [Protótipo no Figma](https://www.figma.com/design/SxR5ObmFxAvHzOs1Jw0AnY/Prot%C3%B3tipos?node-id=0-1&t=MguUSpJBo5u3gB9V-1)  
+- [Lean Inception](https://www.figma.com/board/qob1Oi0suKGhkMU3ag3sD2/Lean-Inception?node-id=0-1&t=lH5c0CJxaFEqLAbm-1)  
+- [Repositório no GitHub](https://github.com/unb-mds/2025-2-NewsHub)  
 
 ---
 
-## Sobre o Projeto
+## 👥 Autores
 
-O NewsHub é uma plataforma inteligente para agregação, personalização e recomendação de notícias, desenvolvida como parte da disciplina de Métodos de Desenvolvimento de Software na UnB.  
-O projeto utiliza tecnologias modernas como Flask, React, Docker e integra APIs de notícias e IA para oferecer uma experiência personalizada ao usuário.
+| Nome                          | GitHub                                                | Função / Responsabilidade   |
+|-------------------------------|------------------------------------------------------|-----------------------------|
+| **Arthur Soares Parente**     | [ArthurDevWorks](https://github.com/ArthurDevWorks)  | Backend Developer           |
+| **Ítalo A. S. de Oliveira**   | [ItaloSamP](https://github.com/ItaloSamP)            | Arquiteto de Software       |
+| **Gustavo da Costa Cintra**   | [gccintra](https://github.com/gccintra)              | Product Owner (PO)          |
+| **Diogo Alves da Silva**      | [Dgprogramas](https://github.com/Dgprogramas)        | Frontend Developer          |
+| **Arthur Sismene Carvalho**   | [Sismene7](https://github.com/Sismene7)              | Frontend Developer          |
+| **Gustavo Silva Rodrigues**   | [g-srodrigues](https://github.com/g-srodrigues)      | Scrum Master                |
 
 ---
 
-> Para instruções de execução, acesse o [Guia de Execução](./guia/).
+## 📖 Sobre o Projeto
+
+O **Synapse** é uma plataforma inteligente para **agregação, personalização e recomendação de notícias**, desenvolvida como parte da disciplina de *Métodos de Desenvolvimento de Software* na **UnB**.  
+
+O projeto utiliza tecnologias modernas como **Flask**, **React**, **Docker** e integra **APIs de notícias** e **Inteligência Artificial (IA)** para oferecer uma experiência personalizada ao usuário.  
+
+---
+
+> ⚙️ Para instruções de execução, acesse o [Guia de Execução](./guia/).
