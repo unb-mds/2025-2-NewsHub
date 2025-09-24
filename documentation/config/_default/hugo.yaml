@@ -13,6 +13,7 @@ imaging:
   quality: 75
 markup:
   tableOfContents:
+    ShowToc: false
     ordered: true
 pagination:
   pagerSize: 9

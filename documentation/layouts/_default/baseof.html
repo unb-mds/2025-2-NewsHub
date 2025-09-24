@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ block "title" . }}{{ .Site.Title }}{{ end }}</title>
+  {{ $css := resources.Get "css/synapse.css" | resources.Minify }}
+  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
+</head>
+<body class="syn-app">
+  {{ partial "sidebar.html" . }}
+  <main class="main">
+    {{ block "main" . }}{{ .Content }}{{ end }}
+  </main>
+</body>
+</html>
