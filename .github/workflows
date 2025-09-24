@@ -6,20 +6,23 @@ on:
       - feature/hugo-documentation
 
 jobs:
-  build-deploy:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout source
+    - name: Checkout repository
       uses: actions/checkout@v3
 
     - name: Setup Hugo
       uses: peaceiris/actions-hugo@v2
       with:
-        hugo-version: '0.111.3'  # ajuste para sua versão do Hugo
+        hugo-version: '0.111.3'
 
-    - name: Build site
+    - name: Build Hugo site
       run: hugo -D -d ./public
+
+    - name: Create .nojekyll to disable Jekyll build
+      run: touch ./public/.nojekyll
 
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
