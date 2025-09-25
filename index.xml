@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>Início on Synapse Documentation</title><link>https://unb-mds.github.io/2025-2-NewsHub/</link><description>Recent content in Início on Synapse Documentation</description><generator>Hugo</generator><language>en</language><atom:link href="https://unb-mds.github.io/2025-2-NewsHub/index.xml" rel="self" type="application/rss+xml"/><item><title/><link>https://unb-mds.github.io/2025-2-NewsHub/about_project/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://unb-mds.github.io/2025-2-NewsHub/about_project/</guid><description>&lt;h1 id="proposta-de-projeto-synapse"&gt;Proposta de Projeto: Synapse&lt;/h1&gt;
+&lt;h2 id="1-título-do-projeto"&gt;1. Título do Projeto&lt;/h2&gt;
+&lt;p&gt;Synapse: Plataforma de Notícias Inteligente com Agregação via API, Personalização e Sistema de Recomendação.&lt;/p&gt;
+&lt;h2 id="2-resumo"&gt;2. Resumo&lt;/h2&gt;
+&lt;p&gt;O projeto Synapse propõe o desenvolvimento de uma plataforma web inovadora para descoberta e consumo de notícias. Utilizando uma API dedicada (GNews), o sistema agregará artigos de fontes globais. Os usuários poderão navegar por notícias categorizadas, aplicar filtros avançados e receber recomendações personalizadas com base em seu comportamento. Um diferencial importante é a newsletter diária opcional, que entrega resumos gerados por IA, agrupando diferentes perspectivas sobre o mesmo evento e alinhando o conteúdo aos interesses de cada usuário.&lt;/p&gt;</description></item><item><title/><link>https://unb-mds.github.io/2025-2-NewsHub/admin/config.yml</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://unb-mds.github.io/2025-2-NewsHub/admin/config.yml</guid><description/></item><item><title/><link>https://unb-mds.github.io/2025-2-NewsHub/getting_started/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://unb-mds.github.io/2025-2-NewsHub/getting_started/</guid><description>&lt;h1 id="como-rodar-o-projeto"&gt;Como rodar o projeto&lt;/h1&gt;
+&lt;p&gt;Este guia explica como executar o projeto Synapse, incluindo backend, frontend e banco de dados, tanto via Docker (recomendado) quanto em ambiente local para desenvolvimento.&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id="pré-requisitos"&gt;Pré-requisitos&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Git&lt;/strong&gt; (para clonar o repositório)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Docker Desktop&lt;/strong&gt; (para orquestração dos serviços)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Python 3.12+&lt;/strong&gt; (para desenvolvimento local do backend)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Node.js e npm&lt;/strong&gt; (para desenvolvimento local do frontend)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Software de gerenciamento de banco de dados&lt;/strong&gt; (opcional, ex: DBeaver, TablePlus, pgAdmin)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id="execução-recomendada-docker"&gt;Execução Recomendada: Docker&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Clonar o repositório&lt;/strong&gt;&lt;/p&gt;</description></item></channel></rss>
