@@ -2,7 +2,7 @@ from flask import request, jsonify
 from sqlalchemy.exc import IntegrityError
 import logging
 from app.services.user_service import UserService
-from flask_jwt_extended import set_access_cookies, create_access_token
+from flask_jwt_extended import set_access_cookies, create_access_token, unset_jwt_cookies
 from app.models.exceptions import UserNotFoundError, EmailInUseError
 
 class UserController:
@@ -247,5 +247,30 @@ class UserController:
                     "message": "Erro interno do servidor.",
                     "data": None,
                     "error": "Ocorreu um erro inesperado ao alterar a senha.",
+                }
+            ), 500
+    
+    def logout(self, user_id):
+        try:
+            self.service.logout(user_id)
+            
+            response = jsonify({
+                "success": True,
+                "message": "Logout bem-sucedido.",
+                "data": None,
+                "error": None,
+            })
+            
+            unset_jwt_cookies(response)
+            
+            return response, 200
+        except Exception as e:
+            logging.error(f"Erro inesperado durante o logout (ID: {user_id}): {e}", exc_info=True)
+            return jsonify(
+                {
+                    "success": False,
+                    "message": "Erro interno do servidor.",
+                    "data": None,
+                    "error": "Ocorreu um erro inesperado durante o logout.",
                 }
             ), 500
