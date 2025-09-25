@@ -3,8 +3,8 @@ name: Deploy Hugolify site to Pages
 on:
   push:
     branches:
-     - feature/hugo-documentation
-  workflow_dispatch:
+      - feature/hugo-documentation
+  workflow_dispatch:               
 
 jobs:
   deploy:
@@ -16,7 +16,7 @@ jobs:
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:
-          hugo-version: "0.139.4" # confirme a versão que você usa localmente
+          hugo-version: "0.139.4"
           extended: true
 
       - name: Build Hugolify site
