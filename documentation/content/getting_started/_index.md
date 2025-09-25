@@ -1,4 +1,8 @@
-# Como rodar o projeto
+---
+title: "Getting Started"
+---
+
+# Como rodar o Projeto
 
 Este guia explica como executar o projeto Synapse, incluindo backend, frontend e banco de dados, tanto via Docker (recomendado) quanto em ambiente local para desenvolvimento.
 

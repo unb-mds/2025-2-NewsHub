@@ -1,3 +1,7 @@
+---
+title: "About Project"
+---
+
 # Proposta de Projeto: Synapse
 
 ## 1. Título do Projeto
