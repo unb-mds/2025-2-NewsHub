@@ -1,18 +1,14 @@
 baseURL: "https://unb-mds.github.io/2025-2-NewsHub/"
 
+# LANGUAGE
 defaultContentLanguage: en
 
-# URLs
-relativeURLs: true
-canonifyURLs: true
-uglyURLs: false
-
+# ADVANCED
 build:
   buildStats:
     disableClasses: false
     disableIDs: true
     disableTags: false
-    enable: true
 
 enableRobotsTXT: true
 
@@ -21,11 +17,10 @@ imaging:
 
 markup:
   tableOfContents:
-    ShowToc: false
+    showToc: false
     ordered: true
 
 pagination:
   pagerSize: 9
 
 removePathAccents: true
-timeout: 100000
