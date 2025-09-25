@@ -1,32 +1,30 @@
-name: Deploy Hugo site to GitHub Pages
+name: Deploy Hugolify site to Pages
 
 on:
   push:
     branches:
-      - feature/hugo-documentation
+     - feature/hugo-documentation
+  workflow_dispatch:
 
 jobs:
-  build_and_deploy:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Hugo
-      uses: peaceiris/actions-hugo@v2
-      with:
-        hugo-version: '0.111.3'
+      - name: Setup Hugo
+        uses: peaceiris/actions-hugo@v2
+        with:
+          hugo-version: "0.139.4" # confirme a versão que você usa localmente
+          extended: true
 
-    - name: Build Hugo site
-      run: hugo -D -d ./public
+      - name: Build Hugolify site
+        run: hugo -s documentation --minify
 
-    - name: Create .nojekyll to disable Jekyll build
-      run: touch ./public/.nojekyll
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./public
-        publish_branch: gh-pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: documentation/public
+          publish_branch: gh-pages
