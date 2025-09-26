@@ -37,7 +37,6 @@ def login():
 def logout(user_id: int):
     return user_controller.logout(user_id)
 
-
 @user_bp.route("/profile", methods=["GET"])
 @jwt_required()
 @get_user_id_from_token

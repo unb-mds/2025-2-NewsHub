@@ -85,7 +85,3 @@ class UserService:
 
         self.repo.update(user)
         
-    def logout(self, user_id: int):
-        logging.info(f"Usuário com ID {user_id} solicitou logout.")
-        
-        return True

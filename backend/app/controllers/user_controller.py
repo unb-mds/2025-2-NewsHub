@@ -251,9 +251,7 @@ class UserController:
             ), 500
     
     def logout(self, user_id):
-        try:
-            self.service.logout(user_id)
-            
+        try:            
             response = jsonify({
                 "success": True,
                 "message": "Logout bem-sucedido.",
