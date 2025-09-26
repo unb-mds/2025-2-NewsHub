@@ -1,3 +1,4 @@
+import logging
 from sqlalchemy.exc import SQLAlchemyError
 from app.repositories.user_repository import UserRepository
 from app.models.user import User
@@ -83,3 +84,4 @@ class UserService:
             raise ValueError(str(e)) from e
 
         self.repo.update(user)
+        

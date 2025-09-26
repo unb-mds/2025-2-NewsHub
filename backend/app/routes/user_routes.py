@@ -1,6 +1,6 @@
 from functools import wraps
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, unset_access_cookies
 from app.controllers.user_controller import UserController
 
 user_bp = Blueprint("users", __name__)
@@ -30,6 +30,12 @@ def register():
 def login():
     data = request.get_json()
     return user_controller.login(data)
+
+@user_bp.route("/logout", methods=["POST"])
+@jwt_required()
+@get_user_id_from_token
+def logout(user_id: int):
+    return user_controller.logout(user_id)
 
 @user_bp.route("/profile", methods=["GET"])
 @jwt_required()
