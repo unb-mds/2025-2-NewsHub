@@ -3,14 +3,31 @@ import { Link, useNavigate } from "react-router-dom";
 import BackIcon from "../icons/back-svgrepo-com.svg";
 import ArrowDownIcon from "../icons/arrow-down.svg";
 
+// Função auxiliar para ler um cookie pelo nome
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 const Header = ({ userEmail }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navigate = useNavigate();
 
   // Função de logout
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/"); // redireciona para login
+  const handleLogout = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const csrfToken = getCookie("csrf_access_token");
+
+      await fetch(`${apiUrl}/users/logout`, {
+        method: "POST",
+        headers: { "X-CSRF-TOKEN": csrfToken },
+        credentials: "include",
+      });
+    } finally {
+      navigate("/"); // redireciona para login, mesmo se a chamada falhar
+    }
   };
 
   return (
