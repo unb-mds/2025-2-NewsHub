@@ -128,3 +128,10 @@ pip install -r backend/requirements.txt
 2.  Instale as dependências do Node.js: `npm install`
 3.  Inicie o servidor de desenvolvimento: `npm run dev`
 4.  O frontend estará disponível em http://localhost:5173.
+
+## Equipe de Desenvolvimento
+
+| Membro | Membro | Membro |
+| :---: | :---: | :---: |
+| <img src="https://github.com/ArthurDevWorks.png" width="100px;" style="border-radius: 10px;" alt="Arthur Parente"><br><a href="https://github.com/ArthurDevWorks">Arthur Parente</a> | <img src="https://github.com/Sismene7.png" width="100px;" style="border-radius: 10px;" alt="Arthur Sismene"><br><a href="https://github.com/Sismene7">Arthur Sismene</a> | <img src="https://github.com/Dgprogramas.png" width="100px;" style="border-radius: 10px;" alt="Diogo Alves"><br><a href="https://github.com/Dgprogramas">Diogo Alves</a> |
+| <img src="https://github.com/gccintra.png" width="100px;" height="100px" style="border-radius: 10px;" alt="Gustavo Cintra"><br><a href="https://github.com/gccintra">Gustavo Cintra</a> | <img src="https://github.com/g-srodrigues.png" width="100px;" style="border-radius: 10px;" alt="Gustavo Rodrigues"><br><a href="https://github.com/g-srodrigues">Gustavo Rodrigues</a> | <img src="https://github.com/ItaloSamP.png" width="100px;" style="border-radius: 10px;" alt="Ítalo Alves"><br><a href="https://github.com/ItaloSamP">Ítalo Alves</a> |
