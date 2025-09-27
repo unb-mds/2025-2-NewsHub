@@ -12,6 +12,7 @@ class TopicRepository:
 
     def create(self, model: Topic) -> Topic:
         try:
+            model.name = model.name.lower()
             entity = model.to_orm()
             self.session.add(entity)
             self.session.commit()
@@ -23,7 +24,7 @@ class TopicRepository:
             raise
 
     def find_by_name(self, name: str) -> Topic | None:
-        stmt = select(TopicEntity).filter(TopicEntity.name == name)
+        stmt = select(TopicEntity).filter(TopicEntity.name == name.lower())
         e = self.session.execute(stmt).scalar_one_or_none()
         return Topic.from_entity(e) if e else None
 

@@ -11,17 +11,26 @@ class TopicController:
     def create(self, user_id: int, data: dict):
         try:
             result = self.service.create_and_attach(user_id, data)
-            t = result["topic"]
+            topic = result["topic"]
+            message = "Tópico adicionado com sucesso." if result["attached"] else "Tópico já associado."
             return jsonify({
                 "success": True,
-                "message": "Tópico criado com sucesso.",
-                "data": {"id": t.id, "name": t.name, "state": t.state, "attached": result["attached"]},
+                "message": message,
+                "data": {"topic": {"id": topic.id, "name": topic.name, "state": topic.state}, "attached": result["attached"]},
                 "error": None,
             }), 201
         except TopicValidationError as e:
             return jsonify({"success": False, "message": "Dados inválidos.", "data": None, "error": str(e)}), 400
         except IntegrityError:
             return jsonify({"success": False, "message": "Erro de integridade.", "data": None, "error": "Conflito de dados."}), 409
+        except IntegrityError as e:
+            logging.warning(f"IntegrityError ao criar/associar tópico para user {user_id}: {e}")
+            # Tenta novamente, pois o tópico provavelmente foi criado em uma race condition
+            result = self.service.create_and_attach(user_id, data)
+            topic = result["topic"]
+            message = "Tópico adicionado com sucesso." if result["attached"] else "Tópico já associado."
+            # Retorna 200 OK em vez de 201 Created, pois o recurso já existia.
+            return jsonify({"success": True, "message": message, "data": {"topic": {"id": topic.id, "name": topic.name, "state": topic.state}, "attached": result["attached"]}, "error": None}), 200
         except Exception as e:
             logging.error(f"Erro inesperado ao criar tópico: {e}", exc_info=True)
             return jsonify({"success": False, "message": "Erro interno do servidor.", "data": None, "error": "Ocorreu um erro inesperado."}), 500
