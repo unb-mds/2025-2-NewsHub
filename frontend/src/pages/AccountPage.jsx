@@ -1,12 +1,9 @@
-// src/pages/AccountPage.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/HeaderEditAccount";
 import PreferredTopics from "../components/PreferredTopics";
-// --- COMPONENTES INTERNOS DA PÁGINA ---
-// Estes são pequenos componentes usados apenas dentro desta página para evitar repetição.
+import AddSource from "../pages/AddSource";
 
-// Componente para exibir uma linha de informação (ex: Nome, Email).
 const InfoRow = ({ label, value, action, actionLink }) => (
   <div className="flex justify-between items-center py-3">
     <div>
@@ -90,43 +87,64 @@ const AccountPage = () => {
   const [error, setError] = useState(null);
   const [newTopic, setNewTopic] = useState("");
   const [topicError, setTopicError] = useState("");
+  const [isAddingSource, setIsAddingSource] = useState(false);
 
-  // --- BUSCA DE DADOS ---
+  const handleOpenAddSource = () => setIsAddingSource(true);
+
+  const handleSaveSources = (newSources) => {
+    // Aqui você faria a chamada PATCH/PUT para a API para salvar as novas fontes
+    console.log("Fontes salvas localmente e prontas para a API:", newSources);
+
+    // Lógica para adicionar as novas fontes na sua lista (apenas localmente por enquanto)
+    setUserData((prevData) => ({
+      ...prevData,
+      preferred_sources: [
+        ...prevData.preferred_sources,
+        ...newSources.filter(
+          (newSrc) =>
+            !prevData.preferred_sources.some(
+              (existingSrc) => existingSrc.id === newSrc.id
+            )
+        ),
+      ],
+    }));
+    setIsAddingSource(false); // Fecha a tela de adição
+  };
+
   // Este `useEffect` roda uma vez quando o componente é montado para realizar a busca de dados do usuario.
   useEffect(() => {
-  const fetchUserData = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const apiUrl = import.meta.env.VITE_API_BASE_URL;
-      const response = await fetch(`${apiUrl}/users/profile`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setUserData({
-          id: data.data.id,
-          full_name: data.data.full_name,
-          email: data.data.email,
-          birthdate: data.data.birthdate,
-          preferred_topics: data.data.preferred_topics || [],
-          preferred_sources: data.data.preferred_sources || [],
+    const fetchUserData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        const response = await fetch(`${apiUrl}/users/profile`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
         });
-      } else {
-        setError(data.error || "Não foi possível carregar os dados.");
+        const data = await response.json();
+        if (response.ok) {
+          setUserData({
+            id: data.data.id,
+            full_name: data.data.full_name,
+            email: data.data.email,
+            birthdate: data.data.birthdate,
+            preferred_topics: data.data.preferred_topics || [],
+            preferred_sources: data.data.preferred_sources || [],
+          });
+        } else {
+          setError(data.error || "Não foi possível carregar os dados.");
+        }
+      } catch {
+        setError("Erro ao buscar dados do usuário.");
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      setError("Erro ao buscar dados do usuário.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  fetchUserData();
-}, []);
+    };
+    fetchUserData();
+  }, []);
 
-  // --- FUNÇÕES DE MANIPULAÇÃO ---
   // Função para adicionar um novo tópico à lista.
   const handleAddTopic = () => {
     if (newTopic.trim() === "") return;
@@ -158,7 +176,6 @@ const AccountPage = () => {
     }));
   };
 
-  // --- RENDERIZAÇÃO CONDICIONAL ---
   // Mostra um spinner de carregamento enquanto os dados não chegam.
   if (loading) {
     return (
@@ -195,8 +212,16 @@ const AccountPage = () => {
       </div>
     );
   }
+  if (isAddingSource) {
+    return (
+      <AddSource
+        onSave={handleSaveSources}
+        onBack={() => setIsAddingSource(false)}
+        userEmail={userData.email}
+      />
+    );
+  }
 
-  // --- RENDERIZAÇÃO PRINCIPAL ---
   // Se não há erro e o carregamento terminou, mostra a página completa.
   return (
     <div className="bg-gray-50 min-h-screen">
@@ -258,7 +283,10 @@ const AccountPage = () => {
                     <p className="text-base font-medium text-gray-900 font-montserrat">
                       Your Sources
                     </p>
-                    <button className="h-11 flex items-center bg-black text-white text-xs font-bold px-4 rounded hover:bg-gray-800 font-montserrat">
+                    <button
+                      onClick={handleOpenAddSource}
+                      className="h-11 flex items-center bg-black text-white text-xs font-bold px-4 rounded hover:bg-gray-800 font-montserrat"
+                    >
                       Add Source
                     </button>
                   </div>

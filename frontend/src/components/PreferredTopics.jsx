@@ -28,7 +28,7 @@ const PreferredTopics = ({
           value={newTopic}
           onChange={onNewTopicChange} // Usa a função recebida via props
           placeholder="enter a new topic..."
-          className="h-11 flex-grow border border-gray-800 rounded px-4 focus:outline-none focus:ring-2 focus:ring-black text-xs font-montserrat"
+          className="h-11 flex-grow border border-gray-800 rounded px-2 focus:outline-none focus:ring-1 focus:ring-black text-xs font-montserrat"
         />
         <button
           onClick={onAddTopic} // Usa a função recebida via props
