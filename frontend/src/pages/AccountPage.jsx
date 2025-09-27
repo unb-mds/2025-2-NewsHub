@@ -55,13 +55,13 @@ const AccountInformation = ({ user }) => {
   );
 };
 // Componente para exibir um card de uma fonte de notícia.
-const SourceCard = ({ source }) => (
+const SourceCard = ({ source, onDelete }) => (
   <div className="flex items-center justify-between border border-black rounded shadow-lg p-4">
     <div>
       <h3 className="font-semibold text-gray-800">{source.name}</h3>
       {source.url && <p className="text-sm text-gray-500">{source.url}</p>}
     </div>
-    <button className="text-red-500 hover:text-red-700">
+    <button onClick={() => onDelete(source.id)} className="text-red-500 hover:text-red-700">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-5 w-5"
@@ -80,6 +80,13 @@ const SourceCard = ({ source }) => (
   </div>
 );
 
+// Função auxiliar para ler um cookie pelo nome
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(";").shift();
+}
+
 // --- Componente Principal da Página ---
 const AccountPage = () => {
   const [userData, setUserData] = useState(null);
@@ -91,26 +98,42 @@ const AccountPage = () => {
 
   const handleOpenAddSource = () => setIsAddingSource(true);
 
-  const handleSaveSources = (newSources) => {
-    // Aqui você faria a chamada PATCH/PUT para a API para salvar as novas fontes
-    console.log("Fontes salvas localmente e prontas para a API:", newSources);
+  const handleSaveSources = async (newSources) => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
+    const csrfToken = getCookie("csrf_access_token");
 
-    // Lógica para adicionar as novas fontes na sua lista (apenas localmente por enquanto)
-    setUserData((prevData) => ({
-      ...prevData,
-      preferred_sources: [
-        ...prevData.preferred_sources,
-        ...newSources.filter(
-          (newSrc) =>
-            !prevData.preferred_sources.some(
-              (existingSrc) => existingSrc.id === newSrc.id
-            )
-        ),
-      ],
-    }));
-    setIsAddingSource(false); // Fecha a tela de adição
+    const attachPromises = newSources.map((source) => {
+      return fetch(`${apiUrl}/news_sources/attach`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": csrfToken,
+        },
+        body: JSON.stringify({ source_id: source.id }),
+        credentials: "include",
+      });
+    });
+
+    try {
+      const responses = await Promise.all(attachPromises);
+      const failedResponses = responses.filter((res) => !res.ok);
+
+      if (failedResponses.length > 0) {
+        // Opcional: tratar erros individuais
+        setError("Some sources could not be added.");
+      }
+
+      // Atualiza o estado local com as fontes que foram salvas com sucesso
+      setUserData((prevData) => ({
+        ...prevData,
+        preferred_sources: [...prevData.preferred_sources, ...newSources],
+      }));
+    } catch (err) {
+      setError("Connection error while saving sources.");
+    } finally {
+      setIsAddingSource(false); // Fecha a tela de adição
+    }
   };
-
   // Este `useEffect` roda uma vez quando o componente é montado para realizar a busca de dados do usuario.
   useEffect(() => {
     const fetchUserData = async () => {
@@ -118,26 +141,47 @@ const AccountPage = () => {
       setError(null);
       try {
         const apiUrl = import.meta.env.VITE_API_BASE_URL;
-        const response = await fetch(`${apiUrl}/users/profile`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        });
-        const data = await response.json();
-        if (response.ok) {
+        // Busca de dados do perfil, tópicos e fontes em paralelo
+        const [profileResponse, topicsResponse, sourcesResponse] = await Promise.all([
+          fetch(`${apiUrl}/users/profile`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }),
+          fetch(`${apiUrl}/topics/list`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }),
+          fetch(`${apiUrl}/news_sources/list_all_attached_sources`, {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }),
+        ]);
+
+        const profileData = await profileResponse.json();
+        const topicsData = await topicsResponse.json();
+        const sourcesData = await sourcesResponse.json();
+
+        if (profileResponse.ok && topicsResponse.ok && sourcesResponse.ok) {
           setUserData({
-            id: data.data.id,
-            full_name: data.data.full_name,
-            email: data.data.email,
-            birthdate: data.data.birthdate,
-            preferred_topics: data.data.preferred_topics || [],
-            preferred_sources: data.data.preferred_sources || [],
+            full_name: profileData.data.full_name,
+            email: profileData.data.email,
+            birthdate: profileData.data.birthdate,
+            preferred_topics: topicsData.data || [],
+            preferred_sources: sourcesData.data || [],
           });
         } else {
-          setError(data.error || "Não foi possível carregar os dados.");
+          const errorMsg =
+            profileData.error ||
+            sourcesData.error ||
+            topicsData.error ||
+            "Não foi possível carregar os dados.";
+          setError(errorMsg);
         }
-      } catch {
-        setError("Erro ao buscar dados do usuário.");
+      } catch (err) {
+        setError("Erro de conexão ao buscar dados do usuário.");
       } finally {
         setLoading(false);
       }
@@ -146,36 +190,99 @@ const AccountPage = () => {
   }, []);
 
   // Função para adicionar um novo tópico à lista.
-  const handleAddTopic = () => {
+  const handleAddTopic = async () => {
     if (newTopic.trim() === "") return;
-    // Adiciona uma verificação para o limite de tópicos
     const limit = 10;
     if (userData.preferred_topics.length >= limit) {
       setTopicError("You can only add a maximum of " + limit + " topics.");
-      return; // Impede a adição de mais tópicos
+      return;
     }
     setTopicError("");
 
-    const topicToAdd = {
-      id: Date.now(),
-      name: newTopic.trim(),
-    };
-    setUserData((currentUserData) => ({
-      ...currentUserData,
-      preferred_topics: [...currentUserData.preferred_topics, topicToAdd],
-    }));
-    setNewTopic("");
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const csrfToken = getCookie("csrf_access_token");
+      const response = await fetch(`${apiUrl}/topics/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": csrfToken,
+        },
+        body: JSON.stringify({ name: newTopic.trim() }),
+        credentials: "include",
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        // Adiciona o novo tópico apenas se ele já não estiver na lista (caso de re-associação)
+        if (!userData.preferred_topics.some((t) => t.id === result.data.id)) {
+          setUserData((currentUserData) => ({
+            ...currentUserData,
+            preferred_topics: [...currentUserData.preferred_topics, result.data],
+          }));
+        }
+        setNewTopic("");
+      } else {
+        setTopicError(result.error || "Erro ao adicionar tópico.");
+      }
+    } catch (err) {
+      setTopicError("Erro de conexão. Tente novamente.");
+    }
   };
   // Função para deletar um tópico da lista pelo seu ID.
-  const handleDeleteTopic = (topicId) => {
-    setUserData((currentUserData) => ({
-      ...currentUserData,
-      preferred_topics: currentUserData.preferred_topics.filter(
-        (topic) => topic.id !== topicId
-      ),
-    }));
+  const handleDeleteTopic = async (topicId) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const csrfToken = getCookie("csrf_access_token");
+      const response = await fetch(`${apiUrl}/topics/delete/${topicId}`, {
+        method: "DELETE",
+        headers: { "X-CSRF-TOKEN": csrfToken },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setUserData((currentUserData) => ({
+          ...currentUserData,
+          preferred_topics: currentUserData.preferred_topics.filter(
+            (topic) => topic.id !== topicId
+          ),
+        }));
+      } else {
+        const result = await response.json();
+        setError(result.error || "Não foi possível remover o tópico.");
+      }
+    } catch (err) {
+      setError("Erro de conexão ao remover o tópico.");
+    }
   };
 
+  // Função para deletar uma fonte da lista pelo seu ID.
+  const handleDeleteSource = async (sourceId) => {
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const csrfToken = getCookie("csrf_access_token");
+      const response = await fetch(`${apiUrl}/news_sources/detach/${sourceId}`, {
+        method: "DELETE",
+        headers: { "X-CSRF-TOKEN": csrfToken },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setUserData((currentUserData) => ({
+          ...currentUserData,
+          preferred_sources: currentUserData.preferred_sources.filter(
+            (source) => source.id !== sourceId
+          ),
+        }));
+      } else {
+        const result = await response.json();
+        setError(result.error || "Não foi possível remover a fonte.");
+      }
+    } catch (err) {
+      setError("Erro de conexão ao remover a fonte.");
+    }
+  };
+  // --- RENDERIZAÇÃO CONDICIONAL ---
   // Mostra um spinner de carregamento enquanto os dados não chegam.
   if (loading) {
     return (
@@ -292,7 +399,11 @@ const AccountPage = () => {
                   </div>
                   <div className="mt-6 space-y-6">
                     {userData.preferred_sources.map((source) => (
-                      <SourceCard key={source.id} source={source} />
+                      <SourceCard
+                        key={source.id}
+                        source={source}
+                        onDelete={handleDeleteSource}
+                      />
                     ))}
                   </div>
                 </div>

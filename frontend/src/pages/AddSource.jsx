@@ -1,23 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/HeaderEditAccount";
 import BackIcon from "../icons/back-svgrepo-com.svg";
-
-const SUGGESTED_SOURCES = [
-  { id: 1, name: "The New York Times", url: "nytimes.com" },
-  { id: 2, name: "BBC News", url: "bbc.com/news" },
-  { id: 3, name: "The Guardian", url: "theguardian.com" },
-  { id: 4, name: "Reuters", url: "reuters.com" },
-  { id: 5, name: "CNN", url: "cnn.com" },
-  { id: 6, name: "Folha de S.Paulo", url: "folha.uol.com.br" },
-  { id: 7, name: "Estadão", url: "estadao.com.br" },
-  { id: 8, name: "G1", url: "g1.globo.com" },
-  { id: 9, name: "TechCrunch", url: "techcrunch.com" },
-  { id: 10, name: "Wired", url: "wired.com" },
-  // Adicione mais para testar a rolagem
-  { id: 11, name: "Globo Esporte", url: "globoesporte.com" },
-  { id: 12, name: "UOL", url: "uol.com.br" },
-];
 
 // Sub-componente que representa cada card de fonte
 const SourceSelectCard = ({ source, isSelected, onToggle }) => {
@@ -68,11 +52,43 @@ const SourceSelectCard = ({ source, isSelected, onToggle }) => {
 
 const AddSource = ({ onSave, onBack }) => {
   // Estado para a pesquisa e para as fontes selecionadas
+  const [sources, setSources] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSources, setSelectedSources] = useState({});
 
+  useEffect(() => {
+    const fetchUnattachedSources = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        const response = await fetch(
+          `${apiUrl}/news_sources/list_all_unattached_sources`,
+          {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setSources(data.data || []);
+        } else {
+          setError(data.error || "Failed to load sources.");
+        }
+      } catch (err) {
+        setError("Connection error. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUnattachedSources();
+  }, []);
+
   // Filtra as fontes sugeridas com base no termo de pesquisa
-  const filteredSources = SUGGESTED_SOURCES.filter(
+  const filteredSources = sources.filter(
     (source) =>
       source.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       source.url.toLowerCase().includes(searchTerm.toLowerCase())
@@ -132,8 +148,33 @@ const AddSource = ({ onSave, onBack }) => {
 
         {/* Div para conter a lista de fontes com rolagem */}
         {/* Adicionei `mb-24` (ou um valor maior) para garantir que o scroll não fique sob o footer */}
-        <div className="h-96 overflow-y-auto space-y-4 pl-4 pr-4 mb-24">
-          {filteredSources.length > 0 ? (
+        <div className="h-96 overflow-y-auto space-y-4 pl-4 pr-4 mb-24 relative">
+          {loading ? (
+            <div className="flex justify-center items-center h-full">
+              <svg
+                className="animate-spin h-8 w-8 text-black"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                />
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                />
+              </svg>
+            </div>
+          ) : error ? (
+            <div className="text-center text-red-500 mt-12">{error}</div>
+          ) : filteredSources.length > 0 ? (
             filteredSources.map((source) => (
               <SourceSelectCard
                 key={source.id}
@@ -142,9 +183,13 @@ const AddSource = ({ onSave, onBack }) => {
                 onToggle={handleToggleSource}
               />
             ))
-          ) : (
+          ) : searchTerm ? (
             <p className="text-center text-gray-500 mt-12">
               No sources found matching "{searchTerm}".
+            </p>
+          ) : (
+            <p className="text-center text-gray-500 mt-12">
+              All available sources have been added.
             </p>
           )}
         </div>
