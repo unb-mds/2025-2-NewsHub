@@ -3,25 +3,6 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "../components/HeaderEditAccount";
 import PreferredTopics from "../components/PreferredTopics";
-
-// Objeto de dados mockados (Simula a resposta da sua API)
-const mockUserData = {
-  id: 1,
-  full_name: "Arthur Sismene Carvalho",
-  email: "arthursismene@gmail.com",
-  birthdate: "2004-10-05",
-  preferred_topics: [
-    { id: 1, name: "Technology" },
-    { id: 2, name: "artificial intelligence" },
-    { id: 3, name: "Cristiano Ronaldo" },
-    { id: 4, name: "Python" },
-  ],
-  preferred_sources: [
-    { id: 101, name: "G1", url: "g1.globo.com" },
-    { id: 102, name: "BBC", url: "bbc.com" },
-  ],
-};
-
 // --- COMPONENTES INTERNOS DA PÁGINA ---
 // Estes são pequenos componentes usados apenas dentro desta página para evitar repetição.
 
@@ -111,19 +92,39 @@ const AccountPage = () => {
   const [topicError, setTopicError] = useState("");
 
   // --- BUSCA DE DADOS ---
-  // Este `useEffect` roda uma vez quando o componente é montado para simular a busca de dados.
+  // Este `useEffect` roda uma vez quando o componente é montado para realizar a busca de dados do usuario.
   useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        setUserData(mockUserData);
-        setLoading(false);
-      } catch (err) {
-        setError("Ocorreu um erro ao buscar os dados.");
-        setLoading(false);
+  const fetchUserData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const response = await fetch(`${apiUrl}/users/profile`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setUserData({
+          id: data.data.id,
+          full_name: data.data.full_name,
+          email: data.data.email,
+          birthdate: data.data.birthdate,
+          preferred_topics: data.data.preferred_topics || [],
+          preferred_sources: data.data.preferred_sources || [],
+        });
+      } else {
+        setError(data.error || "Não foi possível carregar os dados.");
       }
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, []);
+    } catch {
+      setError("Erro ao buscar dados do usuário.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchUserData();
+}, []);
 
   // --- FUNÇÕES DE MANIPULAÇÃO ---
   // Função para adicionar um novo tópico à lista.
