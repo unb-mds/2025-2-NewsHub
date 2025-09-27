@@ -108,6 +108,7 @@ const AccountPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [newTopic, setNewTopic] = useState("");
+  const [topicError, setTopicError] = useState("");
 
   // --- BUSCA DE DADOS ---
   // Este `useEffect` roda uma vez quando o componente é montado para simular a busca de dados.
@@ -128,6 +129,14 @@ const AccountPage = () => {
   // Função para adicionar um novo tópico à lista.
   const handleAddTopic = () => {
     if (newTopic.trim() === "") return;
+    // Adiciona uma verificação para o limite de tópicos
+    const limit = 10;
+    if (userData.preferred_topics.length >= limit) {
+      setTopicError("You can only add a maximum of " + limit + " topics.");
+      return; // Impede a adição de mais tópicos
+    }
+    setTopicError("");
+
     const topicToAdd = {
       id: Date.now(),
       name: newTopic.trim(),
@@ -224,9 +233,16 @@ const AccountPage = () => {
               <PreferredTopics
                 topics={userData.preferred_topics}
                 newTopic={newTopic}
-                onNewTopicChange={(e) => setNewTopic(e.target.value)}
+                onNewTopicChange={(e) => {
+                  setNewTopic(e.target.value);
+                  // Limpa o erro assim que o usuário começa a digitar
+                  if (topicError) {
+                    setTopicError("");
+                  }
+                }}
                 onAddTopic={handleAddTopic}
                 onDeleteTopic={handleDeleteTopic}
+                topicError={topicError}
               />
 
               <div className="mt-11 rounded-lg ">

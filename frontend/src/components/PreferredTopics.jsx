@@ -7,6 +7,7 @@ const PreferredTopics = ({
   onNewTopicChange,
   onAddTopic,
   onDeleteTopic, // Prop para a função de deletar
+  topicError,
 }) => {
   return (
     <div className="mt-6 rounded-lg">
@@ -14,6 +15,11 @@ const PreferredTopics = ({
         Preferred news topics
       </h2>
       <hr className="my-4 border-t-2 border-black mb-6" />
+      {topicError && (
+        <p className="mb-2 text-sm text-red-600 font-montserrat">
+          {topicError}
+        </p>
+      )}
 
       {/* Formulário para adicionar tópico */}
       <div className="flex items-end gap-4">
