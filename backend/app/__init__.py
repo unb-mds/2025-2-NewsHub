@@ -3,6 +3,7 @@ from flask import Flask
 from datetime import timedelta
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_swagger_ui import get_swaggerui_blueprint
 from app.routes.user_routes import user_bp
 from app.routes.topic_routes import topic_bp
 from app.routes.news_source_routes import news_source_bp
@@ -25,6 +26,18 @@ def create_app(config_overrides=None):
     
     if config_overrides:
         app.config.update(config_overrides)
+
+    SWAGGER_URL = '/api/docs' 
+    API_URL = '/static/openapi.yaml'  
+
+    swaggerui_blueprint = get_swaggerui_blueprint(
+        SWAGGER_URL,
+        API_URL,
+        config={
+            'app_name': "Synapse API Documentation"
+        }
+    )
+    app.register_blueprint(swaggerui_blueprint)
 
     from app.extensions import db
     db.init_app(app)
