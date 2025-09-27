@@ -5,6 +5,7 @@ from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from app.routes.user_routes import user_bp
 from app.routes.topic_routes import topic_bp
+from app.routes.news_source_routes import news_source_bp
 
 def create_app(config_overrides=None):
     app = Flask(__name__)
@@ -37,5 +38,6 @@ def create_app(config_overrides=None):
 
     app.register_blueprint(user_bp, url_prefix="/users")
     app.register_blueprint(topic_bp, url_prefix="/topics")
+    app.register_blueprint(news_source_bp, url_prefix="/news_sources")
 
     return app

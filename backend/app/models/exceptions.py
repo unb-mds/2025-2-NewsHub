@@ -29,3 +29,15 @@ class NewsSourceValidationError(DomainError):
 class NewsValidationError(DomainError):
     def __init__(self, field: str, message: str):
         super().__init__(f"{field}: {message}")
+
+class NewsSourceNotFoundError(DomainError):
+    """Lançado quando uma fonte de notícia não é encontrada."""
+    pass
+
+class NewsSourceAlreadyAttachedError(DomainError):
+    """Lançado quando se tenta associar uma fonte que já está associada ao usuário."""
+    pass
+
+class NewsSourceNotAttachedError(DomainError):
+    """Lançado quando se tenta desassociar uma fonte que não está associada."""
+    pass

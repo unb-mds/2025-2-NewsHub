@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKey, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from app.extensions import db
 
-class NewsSourceEntity(db.Model):
+class UserNewsSourceEntity(db.Model):
     __tablename__ = "user_news_sources"
 
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", onupdate="CASCADE", ondelete="CASCADE"), primary_key=True)
