@@ -30,7 +30,7 @@ def create_app(config_overrides=None):
     jwt = JWTManager(app)
 
     from app.entities import (user_entity, topic_entity, user_topic_entity, 
-                              news_entity, news_source_entity, news_topic_entity)
+                              news_entity, news_source_entity, news_topic_entity, user_news_sources_entity)
     
     with app.app_context():
         db.create_all()
