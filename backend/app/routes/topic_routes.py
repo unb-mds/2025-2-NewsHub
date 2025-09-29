@@ -17,20 +17,20 @@ def get_user_id_from_token(f):
             return jsonify({"success": False, "message": "Token inválido.", "data": None, "error": "Identidade inválida."}), 400
     return decorated
 
-@topic_bp.post("/create")
+@topic_bp.route("/create", methods=["POST"])
 @jwt_required()
 @get_user_id_from_token
 def create_topic(user_id: int):
     data = request.get_json() or {}
     return topic_controller.create(user_id, data)
 
-@topic_bp.get("/list")
+@topic_bp.route("/list", methods=["GET"])
 @jwt_required()
 @get_user_id_from_token
 def list_my_topics(user_id: int):
     return topic_controller.find_by_user(user_id)
 
-@topic_bp.delete("/delete/<int:topic_id>")
+@topic_bp.route("/delete/<int:topic_id>", methods=["DELETE"])
 @jwt_required()
 @get_user_id_from_token
 def detach_my_topic(user_id: int, topic_id: int):

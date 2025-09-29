@@ -1,4 +1,3 @@
-# backend/app/repositories/topic_repository.py
 import logging
 from sqlalchemy import select
 from sqlalchemy.exc import SQLAlchemyError
