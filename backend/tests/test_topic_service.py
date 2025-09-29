@@ -6,17 +6,14 @@ from sqlalchemy.exc import IntegrityError
 
 @pytest.fixture
 def mock_topic_repo():
-    """Cria um mock para o repositório de tópicos."""
     return MagicMock()
 
 @pytest.fixture
 def mock_users_topics_repo():
-    """Cria um mock para o repositório de associação entre usuários e tópicos."""
     return MagicMock()
 
 @pytest.fixture
 def topic_service(mock_topic_repo, mock_users_topics_repo):
-    """Cria uma instância do TopicService com os repositórios mockados."""
     return TopicService(topic_repo=mock_topic_repo, users_topics_repo=mock_users_topics_repo)
 
 def test_create_and_attach_new_topic(topic_service, mock_topic_repo, mock_users_topics_repo):
@@ -81,9 +78,6 @@ def test_find_by_user_returns_topics(topic_service, mock_topic_repo, mock_users_
     
     mock_users_topics_repo.list_user_topic_ids.return_value = topic_ids
     
-    # --- CORREÇÃO APLICADA AQUI ---
-    # Mockamos o método 'find_by_id' que é chamado em loop.
-    # 'side_effect' fará com que a cada chamada, um item da lista 'topics' seja retornado.
     mock_topic_repo.find_by_id.side_effect = topics
     
     result = topic_service.find_by_user(user_id)
@@ -92,7 +86,6 @@ def test_find_by_user_returns_topics(topic_service, mock_topic_repo, mock_users_
     assert [t.name for t in result] == ["topic 1", "topic 2", "topic 3"]
     mock_users_topics_repo.list_user_topic_ids.assert_called_once_with(user_id)
     
-    # Verificamos se 'find_by_id' foi chamado para cada ID.
     expected_calls = [call(1), call(2), call(3)]
     mock_topic_repo.find_by_id.assert_has_calls(expected_calls)
     assert mock_topic_repo.find_by_id.call_count == 3
@@ -117,3 +110,48 @@ def test_detach_for_user_not_found(topic_service, mock_users_topics_repo):
     
     assert result is False
     mock_users_topics_repo.detach.assert_called_once_with(user_id, topic_id)
+    
+def test_create_and_attach_raises_validation_error(topic_service):
+    with pytest.raises(TopicValidationError, match="name: tamanho inválido."):
+        topic_service.create_and_attach(user_id=1, data={"name": " "})
+
+def test_create_and_attach_integrity_error_on_create_and_recover(topic_service, mock_topic_repo, mock_users_topics_repo):
+    user_id = 1
+    data = {"name": "Race Condition Topic"}
+    topic_to_create = Topic(name=data["name"].lower().strip())
+    recovered_topic = Topic(id=5, name=data["name"].lower().strip())
+
+    mock_topic_repo.find_by_name.side_effect = [None, recovered_topic]
+    mock_topic_repo.create.side_effect = IntegrityError(None, None, None)
+    mock_users_topics_repo.attach.return_value = True
+
+    result = topic_service.create_and_attach(user_id, data)
+
+    assert result["topic"] == recovered_topic
+    assert result["attached"] is True
+    assert mock_topic_repo.find_by_name.call_count == 2
+    mock_users_topics_repo.attach.assert_called_once_with(user_id, recovered_topic.id)
+
+def test_create_and_attach_integrity_error_and_fail_to_recover(topic_service, mock_topic_repo):
+    user_id = 1
+    data = {"name": "Unrecoverable Topic"}
+
+    mock_topic_repo.find_by_name.side_effect = [None, None]
+    mock_topic_repo.create.side_effect = IntegrityError(None, None, None)
+
+    with pytest.raises(IntegrityError):
+        topic_service.create_and_attach(user_id, data)
+
+    assert mock_topic_repo.find_by_name.call_count == 2
+
+def test_create_topic_integrity_error_and_fail_to_recover(topic_service, mock_topic_repo):
+    data = {"name": "Unrecoverable Topic"}
+
+    mock_topic_repo.find_by_name.side_effect = [None]
+    mock_topic_repo.create.side_effect = IntegrityError(None, None, None)
+
+    with pytest.raises(IntegrityError):
+        topic_service.create_topic(data)
+
+    mock_topic_repo.find_by_name.assert_called_once_with(data["name"])
+        

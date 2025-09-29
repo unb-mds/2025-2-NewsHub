@@ -11,7 +11,6 @@ valid_user_data = {
 }
 
 def get_auth_client(client, user_data):
-    # Register user via API to ensure it exists for login
     client.post('/users/register', data=json.dumps(user_data), content_type='application/json')
  
     login_data = {
@@ -91,8 +90,7 @@ def test_add_topic_to_user_without_name_fails(client, db):
 
 def test_get_user_topics_successfully(client, db):
     auth_client, headers = get_auth_client(client, valid_user_data)
-
-    # Add topics for the user via the API
+    
     auth_client.post('/topics/create', data=json.dumps({"name": "saúde"}), content_type='application/json', headers=headers)
     auth_client.post('/topics/create', data=json.dumps({"name": "economia"}), content_type='application/json', headers=headers)
 
@@ -121,8 +119,7 @@ def test_remove_topic_from_user_successfully(client, db):
     topic = Topic(name="arte").to_orm()
     db.session.add(topic)
     db.session.flush()
-
-    # Associate topic with user (user_id=1 because it's the first one created)
+    
     user_topic = UserTopicEntity(user_id=1, topic_id=topic.id)
     db.session.add(user_topic)
     db.session.commit()
@@ -133,7 +130,6 @@ def test_remove_topic_from_user_successfully(client, db):
     assert data['success'] is True
     assert "Tópico desvinculado com sucesso." in data['message']
 
-    # Verify it was deleted from the association table
     association = db.session.query(UserTopicEntity).filter_by(user_id=1, topic_id=topic.id).first()
     assert association is None
 
@@ -146,7 +142,7 @@ def test_remove_nonexistent_topic_from_user_fails(client, db):
     assert "Nada a remover." in error_data['error']
 
 def test_topic_routes_without_token_fails(client):
-    response = client.get('/topics/list') # GET requests don't need CSRF header, just the cookie
+    response = client.get('/topics/list') 
     assert response.status_code == 401
 
     response = client.post(

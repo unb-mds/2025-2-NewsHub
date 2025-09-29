@@ -13,7 +13,6 @@ def mock_service():
 
 @pytest.fixture
 def app_context():
-    """Pushes an application context for the duration of the test."""
     app = Flask(__name__)
     with app.app_context():
         yield
