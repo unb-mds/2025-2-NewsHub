@@ -13,10 +13,12 @@ class UserNewsSourceRepository:
         try:
             # Verifica se a relação já existe
             exists_stmt = select(UserNewsSourceEntity).where(UserNewsSourceEntity.user_id == user_id, UserNewsSourceEntity.source_id == source_id)
-            if self.session.execute(exists_stmt).scalar_one_or_none():
+            existing = self.session.execute(exists_stmt).scalar_one_or_none()
+            if existing:
                 raise NewsSourceAlreadyAttachedError("A fonte de notícia já está associada a este usuário.")
 
             new_attachment = UserNewsSourceEntity(user_id=user_id, source_id=source_id)
+
             self.session.add(new_attachment)
             self.session.commit()
         except IntegrityError: # Caso a fonte ou usuário não exista, ou race condition
@@ -24,7 +26,7 @@ class UserNewsSourceRepository:
             logging.warning(f"Falha de integridade ao tentar associar usuário {user_id} com fonte {source_id}.")
             # Re-lança como uma exceção mais genérica, pois pode ser usuário ou fonte inexistente.
             # O serviço pode tratar isso melhor.
-            raise
+            raise 
         except SQLAlchemyError as e:
             self.session.rollback()
             logging.error(f"Erro de banco ao associar fonte a usuário: {e}", exc_info=True)
@@ -36,7 +38,7 @@ class UserNewsSourceRepository:
             result = self.session.execute(stmt)
             self.session.commit()
             if result.rowcount == 0:
-                raise NewsSourceNotAttachedError("Associação não encontrada para ser removida.")
+                raise NewsSourceNotAttachedError("Associação não encontrada para ser removida.") # Lança exceção se nada foi deletado
         except SQLAlchemyError as e:
             self.session.rollback()
             logging.error(f"Erro de banco ao desassociar fonte de usuário: {e}", exc_info=True)
