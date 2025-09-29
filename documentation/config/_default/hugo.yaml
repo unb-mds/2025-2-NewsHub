@@ -16,6 +16,9 @@ imaging:
   quality: 75
 
 markup:
+  goldmark:
+    renderer:
+      unsafe: true
   tableOfContents:
     showToc: false
     ordered: true
