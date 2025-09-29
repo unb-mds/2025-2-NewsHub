@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutPage";
 import RegisterPage from "./pages/RegisterPage";
 import EditAccount from "./pages/EditAccount.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
+import AccountPage from "./pages/AccountPage";
 
 // Cria o objeto de configuração do roteador
 const router = createBrowserRouter([
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
   {
     path: "/change-password", // A URL da página de edição de conta
     element: <ChangePassword />, // Renderiza o componente EditAccount
+  },
+  {
+    path: "/account", // A URL da página da conta
+    element: <AccountPage />, // Renderiza o componente AccountPage
   },
 ]);
 
