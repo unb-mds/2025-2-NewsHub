@@ -39,4 +39,4 @@ O projeto utiliza tecnologias modernas como **Flask**, **React**, **Docker** e i
 
 ---
 
-> ⚙️ Para instruções de execução, acesse o [Guia de Execução](./getting_started/).
+> ⚙️ Para instruções de execução, acesse o [Guia de Execução](.getting_started/).
