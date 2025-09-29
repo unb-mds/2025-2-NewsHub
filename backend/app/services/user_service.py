@@ -1,4 +1,5 @@
 import logging
+from datetime import date
 from sqlalchemy.exc import SQLAlchemyError
 from app.repositories.user_repository import UserRepository
 from app.models.user import User
@@ -10,9 +11,6 @@ class UserService:
 
     def register(self, data: dict) -> User:
         try:
-            if self.repo.find_by_email(data.get("email", "").lower()):
-                raise EmailInUseError("E-mail já cadastrado")
-
             user_model = User(
                 full_name=data["full_name"],
                 email=data["email"],
@@ -23,6 +21,9 @@ class UserService:
             raise ValueError(str(e)) from e
         except KeyError as e:
             raise KeyError(f"Campo obrigatório ausente: {e}") from e
+
+        if self.repo.find_by_email(user_model.email):
+            raise EmailInUseError("E-mail já cadastrado")
 
         try:
             created_user = self.repo.create(user_model)
@@ -53,15 +54,18 @@ class UserService:
             raise UserNotFoundError("Usuário não encontrado")
 
         try:
+            # Atribui os novos valores para acionar as validações do modelo
             if "full_name" in data:
                 user.full_name = data["full_name"]
             if "birthdate" in data:
-                user.birthdate = data["birthdate"]
+                birthdate_str = data.get("birthdate")
+                if birthdate_str:
+                    user.birthdate = date.fromisoformat(birthdate_str)
             if "email" in data:
+                user.email = data["email"] # Isso acionará a validação de formato
                 existing_user = self.repo.find_by_email(data["email"].lower())
                 if existing_user and existing_user.id != user.id:
                     raise EmailInUseError("O novo e-mail já está em uso.")
-                user.email = data["email"]
 
         except UserValidationError as e:
             raise ValueError(str(e)) from e
