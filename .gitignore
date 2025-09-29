@@ -7,9 +7,12 @@ venv
 venv
 .pytest_cache/
 
+.coverage
+
 # Arquivos do VSCode
 .vscode/
 
 # Arquivos do Mac
 .DS_Store
 frontend/node_modules/
+
