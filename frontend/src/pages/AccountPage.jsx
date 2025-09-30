@@ -1,6 +1,6 @@
 // teste
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Header from "../components/HeaderEditAccount";
 import PreferredTopics from "../components/PreferredTopics";
@@ -97,6 +97,7 @@ const AccountPage = () => {
   const [newTopic, setNewTopic] = useState("");
   const [topicError, setTopicError] = useState("");
   const [isAddingSource, setIsAddingSource] = useState(false);
+  const navigate = useNavigate();
 
   const handleOpenAddSource = () => setIsAddingSource(true);
 
@@ -189,7 +190,7 @@ const AccountPage = () => {
       }
     };
     fetchUserData();
-  }, []);
+  }, [navigate]);
 
   // Função para adicionar um novo tópico à lista.
   const handleAddTopic = async () => {
