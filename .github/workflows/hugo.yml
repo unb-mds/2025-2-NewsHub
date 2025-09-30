@@ -3,7 +3,7 @@ name: Deploy Hugolify site to Pages
 on:
   push:
     branches:
-      - feature/hugo-documentation
+      - main
   workflow_dispatch:               
 
 jobs:
