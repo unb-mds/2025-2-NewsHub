@@ -1,5 +1,7 @@
+// teste
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import Header from "../components/HeaderEditAccount";
 import PreferredTopics from "../components/PreferredTopics";
 import AddSource from "../pages/AddSource";
@@ -23,7 +25,7 @@ const InfoRow = ({ label, value, action, actionLink }) => (
 // Componente que agrupa as informações da conta do usuário.
 const AccountInformation = ({ user }) => {
   const formattedBirthdate = user.birthdate
-    ? new Date(user.birthdate).toLocaleDateString("pt-BR")
+    ? new Date(user.birthdate).toLocaleDateString("pt-BR", { timeZone: "UTC" })
     : "Não informado";
 
   return (
@@ -120,7 +122,7 @@ const AccountPage = () => {
 
       if (failedResponses.length > 0) {
         // Opcional: tratar erros individuais
-        setError("Some sources could not be added.");
+        toast.error("Some sources could not be added.");
       }
 
       // Atualiza o estado local com as fontes que foram salvas com sucesso
@@ -129,7 +131,7 @@ const AccountPage = () => {
         preferred_sources: [...prevData.preferred_sources, ...newSources],
       }));
     } catch (err) {
-      setError("Connection error while saving sources.");
+      toast.error("Connection error while saving sources.");
     } finally {
       setIsAddingSource(false); // Fecha a tela de adição
     }
@@ -215,18 +217,18 @@ const AccountPage = () => {
       const result = await response.json();
       if (response.ok) {
         // Adiciona o novo tópico apenas se ele já não estiver na lista (caso de re-associação)
-        if (!userData.preferred_topics.some((t) => t.id === result.data.id)) {
+        if (!userData.preferred_topics.some((t) => t.id === result.data.topic.id)) {
           setUserData((currentUserData) => ({
             ...currentUserData,
-            preferred_topics: [...currentUserData.preferred_topics, result.data],
+            preferred_topics: [...currentUserData.preferred_topics, result.data.topic],
           }));
         }
         setNewTopic("");
       } else {
-        setTopicError(result.error || "Erro ao adicionar tópico.");
+        setTopicError(result.error || "Error adding topic.");
       }
     } catch (err) {
-      setTopicError("Erro de conexão. Tente novamente.");
+      setTopicError("Connection error. Try again.");
     }
   };
   // Função para deletar um tópico da lista pelo seu ID.
@@ -249,10 +251,10 @@ const AccountPage = () => {
         }));
       } else {
         const result = await response.json();
-        setError(result.error || "Não foi possível remover o tópico.");
+        toast.error(result.error || "Could not remove topic.");
       }
     } catch (err) {
-      setError("Erro de conexão ao remover o tópico.");
+      toast.error("Connection error when removing topic.");
     }
   };
 
@@ -276,10 +278,10 @@ const AccountPage = () => {
         }));
       } else {
         const result = await response.json();
-        setError(result.error || "Não foi possível remover a fonte.");
+        toast.error(result.error || "Could not remove source.");
       }
     } catch (err) {
-      setError("Erro de conexão ao remover a fonte.");
+      toast.error("Connection error when removing source.");
     }
   };
   // --- RENDERIZAÇÃO CONDICIONAL ---
@@ -363,7 +365,8 @@ const AccountPage = () => {
             <div className="">
               <AccountInformation user={userData} />
 
-              <PreferredTopics
+              <PreferredTopics // Adicione uma chave única aqui, como o email do usuário
+                key={userData.email}
                 topics={userData.preferred_topics}
                 newTopic={newTopic}
                 onNewTopicChange={(e) => {

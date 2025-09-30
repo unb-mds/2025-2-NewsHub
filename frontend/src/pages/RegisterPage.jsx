@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function RegisterPage() {
   // 1. Estados para armazenar os dados do formulário
@@ -8,31 +9,40 @@ function RegisterPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [birthdate, setBirthdate] = useState("");
+  const navigate = useNavigate();
 
   // Estados para feedback da API e validação
-  const [message, setMessage] = useState("");
-  // Estado para controlar a cor da mensagem
-  const [isError, setIsError] = useState(false);
   const [errors, setErrors] = useState({});
+
+  // Regex para validação de senha
+  const uppercaseRegex = /[A-Z]/;
+  const lowercaseRegex = /[a-z]/;
+  const numberRegex = /[0-9]/;
 
   // 2. Função de validação do formulário
   const validateForm = () => {
     const newErrors = {};
 
     if (!fullName.trim()) {
-      newErrors.fullName = "O nome é obrigatório.";
+      newErrors.fullName = "Full name is required.";
     }
 
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "O email é inválido.";
+      newErrors.email = "The email is invalid.";
     }
 
-    if (password.length < 6) {
-      newErrors.password = "A senha deve ter no mínimo 6 caracteres.";
+    if (
+      password.length < 8 ||
+      !uppercaseRegex.test(password) ||
+      !lowercaseRegex.test(password) ||
+      !numberRegex.test(password)
+    ) {
+      newErrors.password =
+        "Password must be at least 8 characters long, with one uppercase letter, one lowercase letter, and one number.";
     }
 
     if (password !== confirmPassword) {
-      newErrors.confirmPassword = "As senhas não coincidem.";
+      newErrors.confirmPassword = "Passwords do not match.";
     }
 
     setErrors(newErrors);
@@ -43,12 +53,8 @@ function RegisterPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Limpa mensagens e estados anteriores
-    setMessage("");
-    setIsError(false); // Reinicia o estado de erro
-    setErrors({});
-
     if (!validateForm()) {
+      toast.error("Please correct the errors in the form.");
       return;
     }
 
@@ -73,20 +79,15 @@ function RegisterPage() {
       const data = await response.json();
 
       if (response.ok) {
-        // Se a resposta for OK, define a mensagem e isError como false
-        setMessage(`Usuário cadastrado com sucesso!`);
-        setIsError(false);
+        toast.success(`User registered successfully! Redirecting to login...`);
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       } else {
-        // Se houver um erro, define a mensagem e isError como true
-        setMessage(data.error || "Ocorreu um erro desconhecido.");
-        setIsError(true);
+        toast.error(data.error || "An unknown error occurred.");
       }
     } catch (err) {
-      // Em caso de falha de conexão, define isError como true
-      setMessage(
-        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
-      );
-      setIsError(true);
+      toast.error("Could not connect to the server. Please try again later.");
     }
   };
 
@@ -107,17 +108,16 @@ function RegisterPage() {
         <div className="w-full max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Campo Email */}
-            <div className="relative">
-              <label
+            <label
                 className="block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="email"
               >
-                Email
+                Email Address
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
                       src="./src/icons/envelope-regular-full.svg"
-                      alt="ícone email"
+                      alt="email icon"
                       className="h-5 w-5"
                     />
                   </div>
@@ -125,66 +125,66 @@ function RegisterPage() {
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder=" Digite seu e-mail..."
-                    className="mt-1 block w-full text-[#989898] valid:text-[#111] border border-gray-300 py-2
-                 px-8 shadow-sm transition-colors duration-200 ease-in-out
-                focus:border-black focus:ring-black
-                hover:border-black"
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      if (errors.email) {
+                        setErrors({ ...errors, email: null });
+                      }
+                    }}
+                    placeholder="Enter your e-mail..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                     required
                   />
                 </div>
-              </label>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
-            </div>
+            </label>
             {/* Campo Nome Completo */}
-            <div className="relative">
-              <label
+            <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="fullName"
               >
-                Nome Completo
+                Full Name
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
                       src="./src/icons/user-regular-full.svg"
-                      alt="ícone user"
-                      class="h-5 w-5"
+                      alt="user icon"
+                      className="h-5 w-5"
                     />
                   </div>
                   <input
                     id="fullName"
                     type="text"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    placeholder=" Digite seu nome..."
-                    className="mt-1 block text-[#989898] valid:text-[#111] w-full border border-gray-300 py-2
-                 px-8 shadow-sm transition-colors duration-200 ease-in-out
-                focus:border-black focus:ring-black
-                hover:border-black"
+                    onChange={(e) => {
+                      setFullName(e.target.value);
+                      if (errors.fullName) {
+                        setErrors({ ...errors, fullName: null });
+                      }
+                    }}
+                    placeholder="Enter your name..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.fullName ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                     required
                   />
                 </div>
-                {errors.fullName && (
-                  <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
-                )}
-              </label>
-            </div>
+              {errors.fullName && (
+                <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
+              )}
+            </label>
             {/* Campo data de nascimento*/}
-            <div className="relative">
-              <label
+            <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="birthdate"
               >
-                Data de Nascimento
+                Birthdate
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
                       src="./src/icons/calendar-regular-full.svg"
-                      alt="ícone calendario"
-                      class="h-5 w-5"
+                      alt="calendar icon"
+                      className="h-5 w-5"
                     />
                   </div>
                   <input
@@ -193,114 +193,94 @@ function RegisterPage() {
                     value={birthdate}
                     onChange={(e) => setBirthdate(e.target.value)}
                     required
-                    className="mt-1 text-[#989898] valid:text-[#111] block w-full border border-gray-300 py-2
-                 px-8 shadow-sm transition-colors duration-200 ease-in-out
-                focus:border-black focus:ring-black
-                hover:border-black  [&::-webkit-calendar-picker-indicator]:hidden"
+                    className="w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat border-gray-800 focus:ring-black [&::-webkit-calendar-picker-indicator]:hidden"
                   />
                 </div>
-              </label>
-            </div>
+            </label>
             {/* Campo de Senha */}
-            <div className="relative">
-              <label
+            <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="password"
               >
-                Senha
+                Password
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
                       src="./src/icons/lock-regular-full.svg"
-                      alt="ícone user"
-                      class="h-5 w-5"
+                      alt="lock icon"
+                      className="h-5 w-5"
                     />
                   </div>
                   <input
                     id="password"
                     type="password"
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder=" Sua senha..."
-                    className="mt-1 block w-full border border-gray-300 py-2
-                  px-8 shadow-sm transition-colors duration-200 ease-in-out
-                  focus:border-black focus:ring-black
-                  hover:border-black"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      if (errors.password) {
+                        setErrors({ ...errors, password: null });
+                      }
+                    }}
+                    placeholder="Your password..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                     required
                   />
                 </div>
-              </label>
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
               )}
-            </div>
+            </label>
 
             {/* Campo Confirmação de Senha */}
-            <div className="relative">
-              <label
+            <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
-                htmlFor="password"
+                htmlFor="ConfirmPassword"
               >
-                Senha
+                Confirm Password
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
                       src="./src/icons/lock-regular-full.svg"
-                      alt="ícone user"
-                      class="h-5 w-5"
+                      alt="lock icon"
+                      className="h-5 w-5"
                     />
                   </div>
                   <input
                     id="ConfirmPassword"
                     type="password"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder=" Confirme sua senha..."
-                    className="mt-1 block w-full border border-gray-300 py-2
-                  px-8 shadow-sm transition-colors duration-200 ease-in-out
-                  focus:border-black focus:ring-black
-                  hover:border-black"
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value);
+                      if (errors.confirmPassword) {
+                        setErrors({ ...errors, confirmPassword: null });
+                      }
+                    }}
+                    placeholder="Confirm your password..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                     required
                   />
                 </div>
-              </label>
               {errors.confirmPassword && (
                 <p className="mt-1 text-sm text-red-600">
                   {errors.confirmPassword}
                 </p>
               )}
-            </div>
+            </label>
             <button
               type="submit"
               className="mt-8 w-full rounded-md bg-black py-3 px-5 text-white hover:bg-gray-900"
             >
-              Cadastrar
+              Sign Up
             </button>
           </form>
 
-          {message && (
-            // Classe da cor depende se é erro ou sucesso
-            <p
-              className={`mt-4 text-center text-sm ${
-                isError ? "text-red-600" : "text-green-600"
-              }`}
-            >
-              {message}
-            </p>
-          )}
-          {Object.keys(errors).length > 0 && !message && (
-            <p className="mt-4 text-center text-red-600">
-              Por favor, corrija os erros no formulário.
-            </p>
-          )}
-
           <p className="mt-4 text-center text-sm text-black border-t border-[#111] pt-3">
-            Já tem uma conta?{" "}
+            Already have an account?{" "}
             <Link
               to="/"
               className="font-medium text-[#111] no-underline hover:underline hover:bg-[#1c1c1c] hover:text-[#fff] pt-0.2 px-0.5"
             >
-              Login aqui
+              Login here
             </Link>
           </p>
         </div>
