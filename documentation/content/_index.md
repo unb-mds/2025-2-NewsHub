@@ -22,7 +22,7 @@ Seu grande diferencial está na capacidade de **oferecer notícias de forma pers
 
 - [Protótipo](https://www.figma.com/design/SxR5ObmFxAvHzOs1Jw0AnY/Prot%C3%B3tipos?node-id=0-1&t=MguUSpJBo5u3gB9V-1)  
 - [Lean Inception](https://www.figma.com/board/qob1Oi0suKGhkMU3ag3sD2/Lean-Inception?node-id=0-1&t=lH5c0CJxaFEqLAbm-1)  
-- [Repositório no GitHub](https://github.com/unb-mds/2025-2-NewsHub)  
+- [Repositório no GitHub](https://github.com/unb-mds/2025-2-Synapse)  
 
 ---
 

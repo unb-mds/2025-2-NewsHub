@@ -2,7 +2,7 @@ backend:
   branch: main
   name: git-gateway
 
-display_url: "https://unb-mds.github.io/2025-2-NewsHub/"
+display_url: "https://unb-mds.github.io/2025-2-Synapse/"
 
 local_backend: true
 locale: en
