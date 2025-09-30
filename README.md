@@ -1,8 +1,16 @@
 # Synapse
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Pull Requests](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow.svg)
+![GitHub contributors](https://img.shields.io/github/contributors/unb-mds/2025-2-NewsHub.svg)
+![GitHub issues](https://img.shields.io/github/issues/unb-mds/2025-2-NewsHub.svg)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/unb-mds/2025-2-NewsHub.svg)
+![GitHub license](https://img.shields.io/github/license/unb-mds/2025-2-NewsHub.svg)
+
+![Python](https://img.shields.io/badge/Python-3776AB.svg?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000.svg?logo=flask&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A.svg?logo=react&logoColor=61DAFB)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1.svg?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED.svg?logo=docker&logoColor=white)
 
 Synapse é um projeto de agregador de notícias inteligente, projetado para combater o excesso de informação e oferecer uma experiência de leitura rápida e personalizada. A plataforma utiliza uma API de notícias para descobrir artigos, IA para gerar resumos, e um sistema de recomendação que aprende com as interações do usuário para customizar o feed de notícias.
 
