@@ -29,7 +29,7 @@ Olá\! Ficamos muito felizes com seu interesse em contribuir para o Synapse. Est
     git pull origin develop
     ```
 
-4.  **Abra um Pull Request (PR):** Envie suas alterações para a branch `develop`. Use o [template de PR](https://www.google.com/search?q=.github/PULL_REQUEST_TEMPLATE.md) para garantir que sua descrição esteja completa.
+4.  **Abra um Pull Request (PR):** Envie suas alterações para a branch `develop`. Use o [template de PR](PULL_REQUEST_TEMPLATE.md) para garantir que sua descrição esteja completa.
 
 5.  **Aguarde a Revisão:** Pelo menos um outro membro da equipe precisa revisar e aprovar seu PR antes do merge.
 
