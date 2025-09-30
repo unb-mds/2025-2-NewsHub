@@ -22,8 +22,8 @@ Este guia explica como executar o projeto Synapse, incluindo backend, frontend, 
 
 1. **Clonar o repositório**  
     ```
-    git clone https://github.com/unb-mds/NewsHub.git
-    cd NewsHub
+    git clone https://github.com/unb-mds/Synapse.git
+    cd Synapse
     ```
 
 2. **Criar arquivo de ambiente**  
