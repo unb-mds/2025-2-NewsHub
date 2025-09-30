@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function LoginPage() {
   // 1. Estados para armazenar os dados do formulário
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   // Estados para feedback da API e validação
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
   const [errors, setErrors] = useState({});
 
   // 2. Função de validação do formulário
@@ -16,10 +16,10 @@ function LoginPage() {
     const newErrors = {};
 
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "O email é inválido.";
+      newErrors.email = "The email is invalid.";
     }
     if (!password.trim()) {
-      newErrors.password = "Por favor, insira sua senha.";
+      newErrors.password = "Please enter your password.";
     }
 
     setErrors(newErrors);
@@ -30,13 +30,11 @@ function LoginPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Limpa mensagens anteriores
-    setMessage("");
-    setIsError(false); // Reinicia o estado de erro
     setErrors({});
 
     // Chama a função de validação
     if (!validateForm()) {
+      toast.error("Please correct the errors in the form.");
       return; // Se a validação falhar, para o processo de envio
     }
 
@@ -66,18 +64,13 @@ function LoginPage() {
       // Lida com a resposta
       if (response.ok) {
         // O backend retorna os dados do usuário no campo 'data'
-        setMessage(`Login bem-sucedido! Bem-vindo, ${data.data.full_name}.`);
-        setIsError(false);
-        // Aqui você pode redirecionar o usuário ou salvar o token
+        toast.success(`Login successful! Welcome, ${data.data.full_name}.`);
+        navigate("/account");
       } else {
-        setMessage(data.error || "Ocorreu um erro desconhecido.");
-        setIsError(true);
+        toast.error(data.error || "An unknown error occurred.");
       }
     } catch (err) {
-      setMessage(
-        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
-      );
-      setIsError(true);
+      toast.error("Could not connect to the server. Please try again later.");
     }
   };
 
@@ -99,17 +92,17 @@ function LoginPage() {
         <div className="w-full max-w-lg">
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Campo Email */}
-            <div className="relative">
+            
               <label
                 className="block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="email"
               >
-                Email
+                Email Address
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
                       src="./src/icons/envelope-regular-full.svg"
-                      alt="ícone email"
+                      alt="email icon"
                       className="h-5 w-5"
                     />
                   </div>
@@ -118,32 +111,27 @@ function LoginPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder=" Digite seu e-mail..."
-                    className="mt-1 block w-full text-[#989898] valid:text-[#111] border border-gray-300 py-2
-                 px-8 shadow-sm transition-colors duration-200 ease-in-out
-                focus:border-black focus:ring-black
-                hover:border-black"
+                    placeholder="Enter your e-mail..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                     required
                   />
                 </div>
-              </label>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
-            </div>
+            </label> 
             {/* Campo de Senha */}
-            <div className="relative">
-              <label
+            <label
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="password"
               >
-                Senha
+                Password
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
                       src="./src/icons/lock-regular-full.svg"
-                      alt="ícone user"
-                      class="h-5 w-5"
+                      alt="lock icon"
+                      className="h-5 w-5"
                     />
                   </div>
                   <input
@@ -151,19 +139,15 @@ function LoginPage() {
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder=" Sua senha..."
-                    className="mt-1 block w-full border border-gray-300 py-2
-                  px-8 shadow-sm transition-colors duration-200 ease-in-out
-                  focus:border-black focus:ring-black
-                  hover:border-black"
+                    placeholder="Your password..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.password ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                     required
                   />
                 </div>
-              </label>
               {errors.password && (
                 <p className="mt-1 text-sm text-red-600">{errors.password}</p>
               )}
-            </div>
+            </label>
 
             {/* Links Adicionais */}
             <div className="flex justify-between items-center text-sm font-montserrat">
@@ -178,14 +162,14 @@ function LoginPage() {
                   htmlFor="remember-me"
                   className="ml-2 block text-gray-900 pt-0.2"
                 >
-                  Lembre de mim
+                  Remember me
                 </label>
               </div>
               <a
                 href="#"
                 className="font-medium text-[#111] no-underline hover:underline hover:bg-[#1c1c1c] hover:text-[#fff] pt-0.2 px-0.5"
               >
-                Esqueci minha senha
+                Forgot my password
               </a>
             </div>
 
@@ -193,32 +177,17 @@ function LoginPage() {
               type="submit"
               className="mt-8 w-full rounded-md bg-black py-3 px-5 text-white hover:bg-gray-900"
             >
-              Entrar
+              Sign In
             </button>
           </form>
 
-          {message && (
-            <p
-              className={`mt-4 text-center text-sm ${
-                isError ? "text-red-600" : "text-green-600"
-              }`}
-            >
-              {message}
-            </p>
-          )}
-          {Object.keys(errors).length > 0 && !message && (
-            <p className="mt-4 text-center text-red-600">
-              Por favor, corrija os erros no formulário.
-            </p>
-          )}
-
           <p className="mt-4 text-center text-sm text-black border-t border-[#111] pt-3">
-            Não tem uma conta?{" "}
+            Don't have an account?{" "}
             <Link
               to="/registrar"
               className="font-medium text-[#111] no-underline hover:underline hover:bg-[#1c1c1c] hover:text-[#fff] pt-0.2 px-0.5"
             >
-              Cadastre-se aqui
+              Sign up here
             </Link>
           </p>
         </div>
@@ -241,6 +210,6 @@ function LoginPage() {
       </div>
     </div>
   );
-}
+};
 
 export default LoginPage;

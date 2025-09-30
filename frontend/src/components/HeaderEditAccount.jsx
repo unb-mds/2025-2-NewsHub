@@ -35,7 +35,7 @@ const Header = ({ userEmail }) => {
       <header className="flex justify-between items-center p-6 bg-white border-b border-gray-300 relative">
         {/* Lado esquerdo: Botão "Back" */}
         <Link
-          to="/"
+          to="/account"
           className="flex items-center text-gray-800 hover:text-gray-600"
         >
           <img src={BackIcon} alt="Ícone de Voltar" className="w-5 h-5 mr-2" />

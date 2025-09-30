@@ -1,7 +1,7 @@
 services:
   backend:
     build: ./backend
-    container_name: newshub-backend
+    container_name: synapse-backend
     environment:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
@@ -16,7 +16,7 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: newshub-frontend
+    container_name: synapse-frontend
     ports:
       - "5173:5173"
     volumes:
@@ -27,7 +27,7 @@ services:
     build:
       context: ./backend
       dockerfile: dockerfile.cron
-    container_name: newshub-cron
+    container_name: synapse-cron
     environment:
       DATABASE_URL: "postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}"
       GNEWS_API_KEY: ${GNEWS_API_KEY}
@@ -39,7 +39,7 @@ services:
 
   db:
     image: postgres:14-alpine
-    container_name: newshub-db
+    container_name: synapse-db
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}

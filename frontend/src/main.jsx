@@ -1,40 +1,53 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 
 import LoginPage from "./pages/LoginPage";
 import AboutPage from "./pages/AboutPage";
-import RegisterPage from "./pages/RegisterPage";
+import RegisterPage from "./pages/RegisterPage.jsx";
 import EditAccount from "./pages/EditAccount.jsx";
 import ChangePassword from "./pages/ChangePassword.jsx";
 import AccountPage from "./pages/AccountPage";
+import PublicRoute from "./components/PublicRoute.jsx";
+import PrivateRoute from "./components/PrivateRoute.jsx";
 
 // Cria o objeto de configuração do roteador
 const router = createBrowserRouter([
+  // Rotas públicas normais
+
   {
-    path: "/", // A URL raiz (ex: http://localhost:5173/)
-    element: <LoginPage />, // Renderiza o componente HomePage
+    path: "/",
+    element: <Navigate to="/login" replace />,
   },
   {
     path: "/sobre", // A URL da página "sobre"
     element: <AboutPage />, // Renderiza o componente AboutPage
   },
   {
-    path: "/registrar", // A URL da página de registro
-    element: <RegisterPage />,
+    // Rotas públicas restritas (APENAS para usuários não logados)
+    element: <PublicRoute />,
+    children: [
+      {
+        path: "/login", 
+        element: <LoginPage />,
+      },
+      {
+        path: "/registrar",
+        element: <RegisterPage />,
+      },
+    ],
   },
   {
-    path: "/edit-account", // A URL da página de edição de conta
-    element: <EditAccount />, // Renderiza o componente EditAccount
-  },
-  {
-    path: "/change-password", // A URL da página de edição de conta
-    element: <ChangePassword />, // Renderiza o componente EditAccount
-  },
-  {
-    path: "/account", // A URL da página da conta
-    element: <AccountPage />, // Renderiza o componente AccountPage
+    // Rotas privadas (apenas para usuários logados)
+    element: <PrivateRoute />,
+    children: [
+      { path: "/account", element: <AccountPage /> },
+      { path: "/edit-account", element: <EditAccount /> },
+      { path: "/change-password", element: <ChangePassword /> },
+    ],
   },
 ]);
 
@@ -42,5 +55,6 @@ const router = createBrowserRouter([
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />
+    <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} theme="dark" />
   </React.StrictMode>
 );

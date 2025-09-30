@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Header from "../components/HeaderEditAccount";
 import LockIcon from "../icons/lock-regular-full.svg";
 import SeeEye from "../icons/eye-regular-full.svg";
@@ -22,8 +23,6 @@ function ChangePassword() {
   const [userEmail, setUserEmail] = useState("");
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [isError, setIsError] = useState(false);
   const [showPassword, setShowPassword] = useState({
     new: false,
     confirm: false,
@@ -43,7 +42,7 @@ function ChangePassword() {
           setUserEmail(data.data.email);
         }
       } catch (err) {
-        console.error("Erro ao buscar dados do usuário:", err);
+        console.error("Error fetching user data:", err);
       }
     };
     fetchUserData();
@@ -64,12 +63,12 @@ function ChangePassword() {
       !numberRegex.test(newPassword)
     ) {
       newErrors.newPassword =
-        "A senha deve ter no mínimo 8 caracteres, uma letra maiúscula, uma minúscula e um número.";
+        "Password must be at least 8 characters long, with one uppercase letter, one lowercase letter, and one number.";
     }
 
     if (newPassword !== confirmPassword) {
       if (confirmPassword) {
-        newErrors.confirmPassword = "As senhas não coincidem.";
+        newErrors.confirmPassword = "Passwords do not match.";
       }
     }
 
@@ -91,11 +90,10 @@ function ChangePassword() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
-    setIsError(false);
     setErrors({});
 
     if (!validateForm()) {
+      toast.error("Please correct the errors in the form.");
       return;
     }
 
@@ -120,22 +118,15 @@ function ChangePassword() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage(
-          "Senha atualizada com sucesso! Redirecionando para o login..."
-        );
-        setIsError(false);
+        toast.success("Password updated successfully!");
         setTimeout(() => {
-          navigate("/");
+          navigate("/account");
         }, 2000);
       } else {
-        setMessage(data.error || "Ocorreu um erro desconhecido.");
-        setIsError(true);
+        toast.error(data.error || "An unknown error occurred.");
       }
     } catch (err) {
-      setMessage(
-        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
-      );
-      setIsError(true);
+      toast.error("Could not connect to the server. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -165,9 +156,9 @@ function ChangePassword() {
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
-                      src={LockIcon}
-                      alt="ícone cadeado"
-                      className="h-5 w-5"
+                    src={LockIcon}
+                    alt="lock icon"
+                    className="h-5 w-5"
                     />
                   </div>
                   <input
@@ -177,7 +168,7 @@ function ChangePassword() {
                     value={formData.newPassword}
                     onChange={handleChange}
                     placeholder="enter your password.."
-                    className="mt-1 block text-[#989898] valid:text-[#111] w-full border border-gray-300 py-2 px-9 shadow-sm transition-colors duration-200 ease-in-out focus:border-black focus:ring-black hover:border-black"
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.newPassword ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                   />
                   <button
                     type="button"
@@ -185,9 +176,9 @@ function ChangePassword() {
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                   >
                     <img
-                      src={showPassword.new ? BlockedEye : SeeEye}
-                      alt="Mostrar/Ocultar senha"
-                      className="h-5 w-5"
+                    src={showPassword.new ? BlockedEye : SeeEye}
+                    alt="Show/Hide password"
+                    className="h-5 w-5"
                     />
                   </button>
                 </div>
@@ -208,9 +199,9 @@ function ChangePassword() {
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     <img
-                      src={LockIcon}
-                      alt="ícone cadeado"
-                      className="h-5 w-5"
+                    src={LockIcon}
+                    alt="lock icon"
+                    className="h-5 w-5"
                     />
                   </div>
                   <input
@@ -220,7 +211,7 @@ function ChangePassword() {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="enter your password.."
-                    className="mt-1 block w-full text-[#989898] valid:text-[#111] border border-gray-300 py-2 px-9 shadow-sm transition-colors duration-200 ease-in-out focus:border-black focus:ring-black hover:border-black"
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.confirmPassword ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                   />
                   <button
                     type="button"
@@ -228,9 +219,9 @@ function ChangePassword() {
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                   >
                     <img
-                      src={showPassword.confirm ? BlockedEye : SeeEye}
-                      alt="Mostrar/Ocultar senha"
-                      className="h-5 w-5"
+                    src={showPassword.confirm ? BlockedEye : SeeEye}
+                    alt="Show/Hide password"
+                    className="h-5 w-5"
                     />
                   </button>
                 </div>
@@ -247,19 +238,10 @@ function ChangePassword() {
               className="mt-6 w-full rounded-md bg-black py-3 px-5 text-white hover:bg-gray-900"
               disabled={loading}
             >
-              {loading ? "Confirmando..." : "Confirm"}
+              {loading ? "Confirming..." : "Confirm"}
             </button>
           </form>
 
-          {message && (
-            <p
-              className={`mt-4 text-center text-sm font-montserrat ${
-                isError ? "text-red-600" : "text-green-600"
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </div>
       </div>
     </>

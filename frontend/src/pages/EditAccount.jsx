@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import Header from "../components/HeaderEditAccount";
 
 // Importe os ícones que você está usando no formulário
@@ -27,9 +28,7 @@ function EditAccount() {
 
   // Estado para os erros de validação
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false); // Estado de carregamento
-  const [message, setMessage] = useState(""); // Mensagem de feedback
-  const [isError, setIsError] = useState(false); // Tipo da mensagem (erro ou sucesso)
+  const [loading, setLoading] = useState(true); // Estado de carregamento
 
   // useEffect para buscar os dados do usuário ao carregar o componente
   useEffect(() => {
@@ -52,21 +51,27 @@ function EditAccount() {
         const data = await response.json();
 
         if (response.ok) {
+          // Corrige o problema de fuso horário da data de nascimento
+          const birthdateFromAPI = data.data.birthdate;
+          const date = new Date(birthdateFromAPI);
+          const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+          const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
+          // Formata para YYYY-MM-DD para o input type="date"
+          const formattedDate = adjustedDate.toISOString().split("T")[0];
+
           // Atualizando o estado 'formData' com os dados da API
           setFormData({
             fullName: data.data.full_name,
             email: data.data.email,
-            birthdate: data.data.birthdate,
+            birthdate: formattedDate,
           });
         } else {
           // Tratamento de erros de resposta da API
-          setMessage(data.error || "Não foi possível carregar os dados.");
-          setIsError(true);
+          toast.error(data.error || "Could not load data.");
         }
       } catch (err) {
         // Tratamento de erros de conexão
-        setMessage("Erro de conexão. Tente novamente mais tarde.");
-        setIsError(true);
+        toast.error("Connection error. Please try again later.");
       } finally {
         // Finaliza o carregamento
         setLoading(false);
@@ -79,11 +84,11 @@ function EditAccount() {
     const newErrors = {};
 
     if (!formData.fullName.trim()) {
-      newErrors.fullName = "O nome é obrigatório.";
+      newErrors.fullName = "Full name is required.";
     }
 
     if (!formData.email.trim() || !/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "O email é inválido.";
+      newErrors.email = "The email is invalid.";
     }
 
     setErrors(newErrors);
@@ -98,13 +103,11 @@ function EditAccount() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Limpa estados e mensagens anteriores
-    setMessage("");
-    setIsError(false);
     setLoading(true);
 
     // Valida o formulário
     if (!validateForm()) {
+      toast.error("Please correct the errors in the form.");
       setLoading(false);
       return;
     }
@@ -137,24 +140,17 @@ function EditAccount() {
 
       // Gerenciando a resposta da API
       if (response.ok) {
-        setMessage(
-          `Dados atualizados com sucesso! Redirecionando para o login...`
-        );
-        setIsError(false);
+        toast.success(`Data updated successfully!`);
         // Pequeno delay para o usuário ver a mensagem e depois redireciona
         setTimeout(() => {
-          navigate("/"); // Redireciona para a página de login (que está na rota '/')
+          navigate("/account"); // Redireciona para a página da conta
         }, 2000); // Atraso de 2 segundos
       } else {
-        setMessage(data.error || "Ocorreu um erro desconhecido.");
-        setIsError(true);
+        toast.error(data.error || "An unknown error occurred.");
       }
     } catch (err) {
       // Tratamento de erros de conexão
-      setMessage(
-        "Não foi possível conectar ao servidor. Tente novamente mais tarde."
-      );
-      setIsError(true);
+      toast.error("Could not connect to the server. Please try again later.");
     } finally {
       // Finalizando o estado de carregamento
       setLoading(false);
@@ -184,11 +180,11 @@ function EditAccount() {
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="fullName"
               >
-                Nome Completo
+                Full Name
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     {/* Usa o ícone do padrão de cadastro */}
-                    <img src={UserIcon} alt="ícone user" className="h-5 w-5" />
+                    <img src={UserIcon} alt="user icon" className="h-5 w-5" />
                   </div>
                   <input
                     id="fullName"
@@ -196,11 +192,8 @@ function EditAccount() {
                     type="text"
                     value={formData.fullName}
                     onChange={handleChange}
-                    placeholder=" Digite seu nome..."
-                    className="mt-1 block text-[#989898] valid:text-[#111] w-full border border-gray-300 py-2
-                     px-8 shadow-sm transition-colors duration-200 ease-in-out
-                     focus:border-black focus:ring-black
-                     hover:border-black"
+                    placeholder="Enter your name..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.fullName ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                   />
                 </div>
                 {errors.fullName && (
@@ -217,13 +210,13 @@ function EditAccount() {
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="email"
               >
-                Email
+                Email Address
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     {/* Usa o ícone do padrão de cadastro */}
                     <img
                       src={EnvelopeIcon}
-                      alt="ícone email"
+                      alt="email icon"
                       className="h-5 w-5"
                     />
                   </div>
@@ -233,11 +226,8 @@ function EditAccount() {
                     type="email"
                     value={formData.email}
                     onChange={handleChange}
-                    placeholder=" Digite seu e-mail..."
-                    className="mt-1 block w-full text-[#989898] valid:text-[#111] border border-gray-300 py-2
-                   px-8 shadow-sm transition-colors duration-200 ease-in-out
-                   focus:border-black focus:ring-black
-                   hover:border-black"
+                    placeholder="Enter your e-mail..."
+                    className={`w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat ${errors.email ? "border-red-500 focus:ring-red-500" : "border-gray-800 focus:ring-black"}`}
                   />
                 </div>
                 {errors.email && (
@@ -254,13 +244,13 @@ function EditAccount() {
                 className="mt-6 block text-sm font-medium text-gray-900 font-montserrat"
                 htmlFor="birthdate"
               >
-                Data de Nascimento
+                Birthdate
                 <div className="relative mt-1">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                     {/* Usa o ícone do padrão de cadastro */}
                     <img
                       src={CalendarIcon}
-                      alt="ícone calendario"
+                      alt="calendar icon"
                       className="h-5 w-5"
                     />
                   </div>
@@ -270,10 +260,7 @@ function EditAccount() {
                     type="date"
                     value={formData.birthdate}
                     onChange={handleChange}
-                    className="mt-1 text-[#989898] valid:text-[#111] block w-full border border-gray-300 py-2
-                     px-8 shadow-sm transition-colors duration-200 ease-in-out
-                     focus:border-black focus:ring-black
-                     hover:border-black [&::-webkit-calendar-picker-indicator]:hidden"
+                    className="w-full border rounded py-2 px-9 focus:outline-none focus:ring-1 font-montserrat border-gray-800 focus:ring-black [&::-webkit-calendar-picker-indicator]:hidden"
                   />
                 </div>
               </label>
@@ -283,21 +270,11 @@ function EditAccount() {
             <button
               type="submit"
               className="mt-6 w-full rounded-md bg-black py-3 px-5 text-white hover:bg-gray-900"
+              disabled={loading}
             >
-              Confirmar
+              {loading ? "Confirming..." : "Confirm"}
             </button>
           </form>
-
-          {/* Mensagem de feedback para o usuário */}
-          {message && (
-            <p
-              className={`mt-4 text-center text-sm font-montserrat ${
-                isError ? "text-red-600" : "text-green-600"
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </div>
       </div>
     </>

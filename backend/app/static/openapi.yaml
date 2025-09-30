@@ -531,13 +531,12 @@ components:
       type: object
       properties:
         success: { type: boolean, example: true }
-        message: { type: string, example: "Tópico criado com sucesso." }
+        message: { type: string, example: "Tópico adicionado com sucesso." }
         data:
           type: object
           properties:
-            id: { type: integer, example: 1 }
-            name: { type: string, example: "Tecnologia" }
-            state: { type: integer, example: 1 }
+            topic:
+              $ref: '#/components/schemas/Topic'
             attached: { type: boolean, example: true }
         error: { type: 'object', nullable: true }
 
