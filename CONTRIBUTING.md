@@ -4,8 +4,8 @@ Olá\! Ficamos muito felizes com seu interesse em contribuir para o Synapse. Est
 
 ## Como Posso Contribuir?
 
-  * **Reportando Bugs:** Encontrou um problema? Abra uma [Issue](https://github.com/unb-mds/2025-2-NewsHub/issues) detalhando o problema, como reproduzi-lo e o comportamento esperado.
-  * **Sugerindo Melhorias:** Tem uma ideia para uma nova funcionalidade? Abra uma [Issue](https://github.com/unb-mds/2025-2-NewsHub/issues) com a tag `enhancement`.
+  * **Reportando Bugs:** Encontrou um problema? Abra uma [Issue](https://github.com/unb-mds/2025-2-Synapse/issues) detalhando o problema, como reproduzi-lo e o comportamento esperado.
+  * **Sugerindo Melhorias:** Tem uma ideia para uma nova funcionalidade? Abra uma [Issue](https://github.com/unb-mds/2025-2-Synapse/issues) com a tag `enhancement`.
   * **Contribuindo com Código:** Se você quer corrigir um bug ou implementar uma nova funcionalidade, siga o fluxo de trabalho abaixo.
 
 ## Nosso Fluxo de Trabalho (Git Workflow)

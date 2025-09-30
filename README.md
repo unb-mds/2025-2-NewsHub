@@ -1,10 +1,10 @@
 # Synapse
 
 ![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow.svg)
-![GitHub contributors](https://img.shields.io/github/contributors/unb-mds/2025-2-NewsHub.svg)
-![GitHub issues](https://img.shields.io/github/issues/unb-mds/2025-2-NewsHub.svg)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/unb-mds/2025-2-NewsHub.svg)
-![GitHub license](https://img.shields.io/github/license/unb-mds/2025-2-NewsHub.svg)
+![GitHub contributors](https://img.shields.io/github/contributors/unb-mds/2025-2-Synapse.svg)
+![GitHub issues](https://img.shields.io/github/issues/unb-mds/2025-2-Synapse.svg)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/unb-mds/2025-2-Synapse.svg)
+![GitHub license](https://img.shields.io/github/license/unb-mds/2025-2-Synapse.svg)
 
 ![Python](https://img.shields.io/badge/Python-3776AB.svg?logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-000000.svg?logo=flask&logoColor=white)
@@ -42,8 +42,8 @@ Desenvolvido com um back-end em Flask (Python) e um front-end em React, o sistem
 
 1.  **Clone o repositório:**
     ```sh
-    git clone [https://github.com/unb-mds/2025-2-NewsHub.git](https://github.com/unb-mds/2025-2-NewsHub.git)
-    cd 2025-2-NewsHub
+    git clone [https://github.com/unb-mds/2025-2-Synapse.git](https://github.com/unb-mds/2025-2-Synapse.git)
+    cd 2025-2-Synapse
     ```
 
 2.  **Configure as Variáveis de Ambiente:**
