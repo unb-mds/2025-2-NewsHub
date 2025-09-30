@@ -31,6 +31,12 @@ html,body{
   color: var(--syn-text);
   padding:32px 24px;
   border-right: 1px solid var(--syn-border);
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 260px;
+  height: 100vh;
+  z-index: 10;
 }
 
 .syn-brand{
@@ -64,6 +70,8 @@ html,body{
 .main{
   padding:40px;
   max-width:960px;
+  margin-left: 400px;
+  width: 450%;
 }
 
 h1,h2,h3{

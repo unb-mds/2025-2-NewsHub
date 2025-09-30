@@ -2,7 +2,7 @@
 title: "About Project"
 ---
 
-## Product Goal
+## Visão do Produto
 
 Criar uma plataforma de notícias inteligente que utiliza agregação via API para capturar conteúdo global de diversas fontes, com personalização avançada para cada usuário, incluindo recomendações automatizadas baseadas no comportamento e preferências individuais. A plataforma também oferece resumos gerados por Inteligência Artificial e uma newsletter personalizada, promovendo um consumo eficiente, relevante e prático das notícias.
 
