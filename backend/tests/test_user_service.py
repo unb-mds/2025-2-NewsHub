@@ -164,7 +164,6 @@ def test_login_missing_fields_raises_error(user_service):
         
     assert "E-mail e senha são obrigatórios." in str(e.value)
 
-# Testes para o método get_profile
 def test_get_profile_successful(user_service, mock_user_repo, test_user_data):
     user_id = 1
     user_model_in_db = User(
@@ -189,8 +188,7 @@ def test_get_profile_user_not_found(user_service, mock_user_repo):
     
     assert profile is None
     mock_user_repo.find_by_id.assert_called_once_with(user_id)
-
-# Testes para o método update_profile
+    
 def test_update_profile_successful(user_service, mock_user_repo, test_user_data):
     user_id = 1
     user_model_in_db = User(
@@ -294,7 +292,6 @@ def test_update_profile_invalid_value_raises_error(user_service, mock_user_repo,
     mock_user_repo.find_by_email.assert_not_called()
     mock_user_repo.update.assert_not_called()
 
-# Testes para o método change_password
 def test_change_password_successful(user_service, mock_user_repo, test_user_data):
     user_id = 1
     user_model_in_db = User(
