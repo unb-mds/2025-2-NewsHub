@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Synapse Documentation</title>
+  
+  <link rel="stylesheet" href="/2025-2-Synapse/css/synapse.min.css">
+</head>
+<body class="syn-app">
+  <nav class="syn-sidebar">
+  <a class="syn-brand" href="/">Synapse</a>
+  <ul>
+    <li><a href="/getting_started/">Getting Started</a></li>
+    <li><a href="/about_project/">About Project</a></li>
+  </ul>
+</nav>
+
+  <main class="main">
+    
+<div class="page-wrapper">
+  <div class="page-content">
+    <h1 id="como-rodar-o-projeto">Como rodar o projeto</h1>
+<p>Este guia explica como executar o projeto Synapse, incluindo backend, frontend e banco de dados, tanto via Docker (recomendado) quanto em ambiente local para desenvolvimento.</p>
+<hr>
+<h2 id="pré-requisitos">Pré-requisitos</h2>
+<ul>
+<li><strong>Git</strong> (para clonar o repositório)</li>
+<li><strong>Docker Desktop</strong> (para orquestração dos serviços)</li>
+<li><strong>Python 3.12+</strong> (para desenvolvimento local do backend)</li>
+<li><strong>Node.js e npm</strong> (para desenvolvimento local do frontend)</li>
+<li><strong>Software de gerenciamento de banco de dados</strong> (opcional, ex: DBeaver, TablePlus, pgAdmin)</li>
+</ul>
+<hr>
+<h2 id="execução-recomendada-docker">Execução Recomendada: Docker</h2>
+<ol>
+<li>
+<p><strong>Clonar o repositório</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>git clone https://github.com/unb-mds/Synapse.git
+</span></span><span style="display:flex;"><span>cd Synapse
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Criar arquivo de ambiente</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cp .env.example .env
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Edite o arquivo .env conforme necessário (ex: credenciais do banco, chaves de API)</span>
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Subir os contêineres</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker compose up --build -d
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Inicializar o banco de dados</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>docker compose exec backend flask init-db
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Acessar os serviços</strong></p>
+<ul>
+<li><strong>Frontend:</strong> <a href="http://localhost:5173">http://localhost:5173</a></li>
+<li><strong>Backend:</strong> <a href="http://localhost:5001">http://localhost:5001</a></li>
+<li><strong>Banco de Dados:</strong> O serviço de banco de dados estará disponível na porta definida no <code>docker-compose.yml</code> (ex: 5432 para PostgreSQL).<br>
+Você pode conectar-se usando um software gráfico para visualizar e gerenciar as tabelas.</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="execução-local-desenvolvimento">Execução Local (Desenvolvimento)</h2>
+<h3 id="1-backend-pythonflask">1) Backend (Python/Flask)</h3>
+<ol>
+<li>
+<p><strong>Criar e ativar ambiente virtual</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Linux/macOS</span>
+</span></span><span style="display:flex;"><span>python3 -m venv .venv
+</span></span><span style="display:flex;"><span>source .venv/bin/activate
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Windows</span>
+</span></span><span style="display:flex;"><span>python -m venv .venv
+</span></span><span style="display:flex;"><span>.venv<span style="color:#ae81ff">\S</span>cripts<span style="color:#ae81ff">\a</span>ctivate
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Instalar dependências</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>pip install -r backend/requirements.txt
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Configurar variáveis de ambiente</strong></p>
+<ul>
+<li>Crie um arquivo <code>.env</code> na raiz do projeto com as variáveis necessárias (exemplo em <code>.env.example</code>).</li>
+<li>Configure o banco de dados localmente (ex: PostgreSQL/MySQL) e ajuste a string de conexão:
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-env" data-lang="env"><span style="display:flex;"><span>FLASK_APP<span style="color:#f92672">=</span>backend.app.main
+</span></span><span style="display:flex;"><span>DATABASE_URL<span style="color:#f92672">=</span>postgresql+psycopg://&lt;USUARIO&gt;:&lt;SENHA&gt;@localhost:5432/&lt;SEU_BANCO&gt;
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>Inicializar e rodar o backend</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>flask init-db
+</span></span><span style="display:flex;"><span>flask run --port <span style="color:#ae81ff">5001</span>
+</span></span></code></pre></div></li>
+</ol>
+<h3 id="2-frontend-reactvite">2) Frontend (React/Vite)</h3>
+<ol>
+<li>
+<p><strong>Instalar dependências</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd frontend
+</span></span><span style="display:flex;"><span>npm install
+</span></span></code></pre></div></li>
+<li>
+<p><strong>Rodar o servidor de desenvolvimento</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>npm run dev
+</span></span></code></pre></div></li>
+</ol>
+<hr>
+<h2 id="gerenciamento-do-banco-de-dados">Gerenciamento do Banco de Dados</h2>
+<ul>
+<li>O banco de dados pode ser acessado e gerenciado usando softwares como <strong>DBeaver</strong>, <strong>pgAdmin</strong>, <strong>TablePlus</strong> ou similares.</li>
+<li>Configure a conexão usando as credenciais definidas no <code>.env</code> ou no <code>docker-compose.yml</code>.</li>
+<li>Isso permite visualizar, editar e administrar as tabelas e dados do projeto de forma gráfica.</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>Dica:</strong> Para desenvolvimento, utilize Docker para garantir que todos os serviços estejam integrados e configurados corretamente. O acesso ao banco de dados via software gráfico facilita testes e depuração.</p></blockquote>
+
+  </div>
+</div>
+
+  </main>
+</body>
+</html>

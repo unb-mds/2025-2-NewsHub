@@ -1,0 +1,29 @@
+baseURL: "https://unb-mds.github.io/2025-2-Synapse/"
+
+# LANGUAGE
+defaultContentLanguage: en
+
+# ADVANCED
+build:
+  buildStats:
+    disableClasses: false
+    disableIDs: true
+    disableTags: false
+
+enableRobotsTXT: true
+
+imaging:
+  quality: 75
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  tableOfContents:
+    showToc: false
+    ordered: true
+
+pagination:
+  pagerSize: 9
+
+removePathAccents: true

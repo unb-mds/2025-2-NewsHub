@@ -1,0 +1,51 @@
+{
+  "htmlElements": {
+    "tags": [
+      "a",
+      "blockquote",
+      "body",
+      "br",
+      "code",
+      "div",
+      "em",
+      "h1",
+      "h2",
+      "h3",
+      "head",
+      "hr",
+      "html",
+      "li",
+      "link",
+      "main",
+      "meta",
+      "nav",
+      "ol",
+      "p",
+      "pre",
+      "script",
+      "strong",
+      "table",
+      "tbody",
+      "td",
+      "th",
+      "thead",
+      "title",
+      "tr",
+      "ul"
+    ],
+    "classes": [
+      "btn",
+      "btn-primary",
+      "container",
+      "content",
+      "highlight",
+      "main",
+      "page-content",
+      "page-wrapper",
+      "syn-app",
+      "syn-brand",
+      "syn-sidebar"
+    ],
+    "ids": null
+  }
+}
