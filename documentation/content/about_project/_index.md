@@ -2,21 +2,42 @@
 title: "About Project"
 ---
 
-## Visão do Produto
+## Visão
+Transformar a sobrecarga de informação em conhecimento focado, permitindo que qualquer pessoa se atualize sobre seus interesses em **menos de 5 minutos diários**.
 
-Criar uma plataforma de notícias inteligente que utiliza agregação via API para capturar conteúdo global de diversas fontes, com personalização avançada para cada usuário, incluindo recomendações automatizadas baseadas no comportamento e preferências individuais. A plataforma também oferece resumos gerados por Inteligência Artificial e uma newsletter personalizada, promovendo um consumo eficiente, relevante e prático das notícias.
+---
 
-## Problema
+### O Problema
 
-O consumo de notícias atualmente sofre com o excesso de informações, baixa personalização e dificuldade na busca por conteúdo relevante. Plataformas tradicionais raramente filtram o fluxo de informações segundo os interesses de cada usuário, gerando sobrecarga cognitiva e perda de tempo.
+* **Sobrecarga de Informação:** Um volume impossível de conteúdo diário gera ansiedade e perda de tempo.
+* **Filtro Ineficiente:** Agregadores atuais e redes sociais priorizam engajamento e cliques, não a relevância para o indivíduo.
+* **Perda de Produtividade:** Profissionais gastam um tempo valioso tentando separar o "sinal" do "ruído" para se manterem competitivos.
 
-## Solução
+---
 
-Synapse propõe:
+### A Solução: Uma Plataforma Rápida e Inteligente
 
-- Agrupamento automática de notícias via API (GNews), garantindo diversidade e atualização em tempo real.
-- Sistema de recomendação inteligente que personaliza o conteúdo conforme o perfil e comportamento do usuário.
-- Módulo de IA que gera resumos precisos e agrupa artigos relacionados para facilitar o consumo e entendimento.
-- Envio periódico de newsletter personalizada com os acontecimentos mais relevantes para o usuário.
+O **Synapse** é um ecossistema de notícias que inverte a lógica do mercado, focando em eficiência e valor.
 
-Essa solução torna o consumo de notícias mais focado, prático e alinhado com as necessidades individuais, reduzindo a sobrecarga e aumentando o engajamento do usuário.
+* **Personalização Total:** O usuário define seus interesses e fontes. O feed aprende com o uso, incluindo um feedback de "não tenho interesse" para refinar as recomendações.
+* **Resumos com Inteligência Artificial:** O recurso central da plataforma. A IA gera sínteses objetivas das notícias mais importantes, permitindo uma compreensão rápida do cenário.
+* **Experiência Focada:** Interface minimalista, sem distrações e com tempos de carregamento extremamente rápidos (< 3s) para garantir uma leitura fluida.
+* **Newsletter Diária Inteligente:** Entrega os resumos de IA personalizados diretamente no e-mail do usuário, mantendo-o informado de forma passiva e eficiente.
+
+---
+
+### Proposta de Valor e Diferenciais
+
+* **Foco em Velocidade vs. Retenção:** Nosso objetivo é tirar o usuário da plataforma o mais rápido possível, mas bem-informado. O mercado quer mantê-lo rolando o feed.
+* **Qualidade vs. Quantidade:** Entregamos uma curadoria de alta relevância em vez de um mar de informações.
+* **Eficiência como Recurso Principal:** Usamos IA para economizar o tempo do usuário, não apenas para recomendar o próximo conteúdo.
+* **Sinal vs. Ruído:** Somos a ferramenta definitiva para filtrar o que realmente importa.
+
+---
+
+### Pilares Técnicos
+
+* **Performance:** Arquitetura otimizada para respostas de API abaixo de 500ms.
+* **Segurança:** Dados protegidos com padrões modernos (JWT, bcrypt, HTTPS).
+* **Usabilidade:** Design totalmente responsivo para uma experiência consistente em desktop, tablet e mobile.
+* **Escalabilidade:** Sistema containerizado com Docker e arquitetura desacoplada para facilitar a manutenção e o crescimento futuro.

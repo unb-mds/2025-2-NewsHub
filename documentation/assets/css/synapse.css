@@ -130,3 +130,17 @@ blockquote {
   font-style: italic;
   margin: 20px 0;
 }
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+th {
+  text-align: left;
+}
