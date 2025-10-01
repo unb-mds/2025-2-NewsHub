@@ -69,6 +69,13 @@ Desenvolvido com um back-end em Flask (Python) e um front-end em React, o sistem
     * **Backend (Flask API):** `http://localhost:5001`
     * **Documentação da API (Swagger):** `http://localhost:5001/api/docs`
 
+## Equipe de Desenvolvimento
+
+| Membro | Membro | Membro |
+| :---: | :---: | :---: |
+| <img src="https://github.com/ArthurDevWorks.png" width="100px;" style="border-radius: 10px;" alt="Arthur Parente"><br><a href="https://github.com/ArthurDevWorks">Arthur Parente</a> | <img src="https://github.com/Sismene7.png" width="100px;" style="border-radius: 10px;" alt="Arthur Sismene"><br><a href="https://github.com/Sismene7">Arthur Sismene</a> | <img src="https://github.com/Dgprogramas.png" width="100px;" style="border-radius: 10px;" alt="Diogo Alves"><br><a href="https://github.com/Dgprogramas">Diogo Alves</a> |
+| <img src="https://github.com/gccintra.png" width="100px;" height="100px" style="border-radius: 10px;" alt="Gustavo Cintra"><br><a href="https://github.com/gccintra">Gustavo Cintra</a> | <img src="https://github.com/g-srodrigues.png" width="100px;" style="border-radius: 10px;" alt="Gustavo Rodrigues"><br><a href="https://github.com/g-srodrigues">Gustavo Rodrigues</a> | <img src="https://github.com/ItaloSamP.png" width="100px;" style="border-radius: 10px;" alt="Ítalo Alves"><br><a href="https://github.com/ItaloSamP">Ítalo Alves</a> |
+
 ## 🤝 Como Contribuir
 Este é um projeto de código aberto e adoraríamos receber a sua contribuição! Para saber como, por favor leia o nosso **[Guia de Contribuição](CONTRIBUTING.md)**.
 
@@ -77,3 +84,4 @@ Para garantir uma comunidade acolhedora e inclusiva, esperamos que todos os part
 
 ## 📄 Licença
 Este projeto está licenciado sob a Licença MIT. Veja o ficheiro [LICENSE](LICENSE) para mais detalhes.
+
