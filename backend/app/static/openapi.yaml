@@ -1,0 +1,660 @@
+openapi: 3.0.3
+info:
+  title: Synapse API
+  description: |-
+    API para o projeto Synapse, um agregador de notícias.
+    Esta documentação cobre os endpoints para gerenciamento de usuários, tópicos e fontes de notícias.
+  version: 1.0.0
+servers:
+  - url: http://localhost:5001
+    description: Servidor de Desenvolvimento Local
+
+tags:
+  - name: Users
+    description: Operações relacionadas a autenticação e gerenciamento de usuários.
+  - name: Topics
+    description: Operações para gerenciar os tópicos de interesse do usuário.
+  - name: News Sources
+    description: Operações relacionadas às fontes de notícias e preferências do usuário.
+
+paths:
+  # --- User Routes ---
+  /users/register:
+    post:
+      tags:
+        - Users
+      summary: Registra um novo usuário
+      description: Cria uma nova conta de usuário na plataforma.
+      operationId: registerUser
+      requestBody: # Corrected indentation
+        description: Dados necessários para o registro.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegister'
+      responses:
+        '201':
+          description: Usuário registrado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError' # Corrected indentation
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Autentica um usuário
+      description: Realiza o login do usuário e retorna um cookie de sessão (access_token_cookie).
+      operationId: loginUser
+      requestBody: # Corrected indentation
+        description: Credenciais de login.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Login bem-sucedido.
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: access_token_cookie=...; Path=/; HttpOnly # Corrected indentation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserLoginResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError' # Corrected indentation
+        '401':
+          description: Credenciais inválidas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: "Falha na autenticação."
+                data: null
+                error: "Credenciais inválidas."
+        '500':
+          $ref: '#/components/responses/InternalServerError' # Corrected indentation
+
+  /users/profile:
+    get:
+      tags:
+        - Users
+      summary: Obtém o perfil do usuário autenticado
+      description: Retorna as informações do perfil do usuário logado.
+      operationId: getUserProfile
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Perfil do usuário recuperado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/profile/update:
+    put:
+      tags:
+        - Users
+      summary: Atualiza o perfil do usuário
+      description: Permite que o usuário autenticado atualize seu nome, e-mail e data de nascimento.
+      operationId: updateUserProfile
+      security: # Corrected indentation
+        - cookieAuth: []
+        - csrfAuth: []
+      requestBody:
+        description: Campos a serem atualizados.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+      responses:
+        '200':
+          description: Perfil atualizado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError' # Corrected indentation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '404':
+          $ref: '#/components/responses/NotFoundError' # Corrected indentation
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /users/profile/change_password:
+    put:
+      tags:
+        - Users
+      summary: Altera a senha do usuário
+      description: Permite que o usuário autenticado altere sua senha.
+      operationId: changeUserPassword
+      security: # Corrected indentation
+        - cookieAuth: []
+        - csrfAuth: []
+      requestBody:
+        description: Nova senha.
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+      responses:
+        '200':
+          description: Senha alterada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError' # Corrected indentation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '404':
+          $ref: '#/components/responses/NotFoundError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # --- Topic Routes ---
+  /topics/create:
+    post:
+      tags:
+        - Topics
+      summary: Cria ou associa um tópico ao usuário
+      description: Cria um novo tópico se ele não existir, ou apenas o associa ao usuário autenticado.
+      operationId: createTopic
+      security: # Corrected indentation
+        - cookieAuth: []
+        - csrfAuth: []
+      requestBody:
+        description: Nome do tópico a ser criado/associado.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+              properties:
+                name:
+                  type: string
+                  example: "Inteligência Artificial"
+      responses:
+        '201':
+          description: Tópico criado/associado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError' # Corrected indentation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '409':
+          $ref: '#/components/responses/ConflictError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /topics/list:
+    get:
+      tags:
+        - Topics
+      summary: Lista os tópicos do usuário
+      description: Retorna a lista de tópicos de interesse do usuário autenticado.
+      operationId: listUserTopics
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Tópicos recuperados com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /topics/delete/{topic_id}:
+    delete:
+      tags:
+        - Topics
+      summary: Desassocia um tópico do usuário
+      description: Remove um tópico da lista de interesses do usuário autenticado.
+      operationId: detachTopic
+      security: # Corrected indentation
+        - cookieAuth: []
+        - csrfAuth: []
+      parameters:
+        - name: topic_id
+          in: path
+          required: true
+          description: O ID do tópico a ser desassociado.
+          schema:
+            type: integer
+            example: 5
+      responses:
+        '200':
+          description: Tópico desvinculado com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '404':
+          $ref: '#/components/responses/NotFoundError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # --- News Source Routes ---
+  /news_sources/list_all:
+    get:
+      tags:
+        - News Sources
+      summary: Lista todas as fontes de notícias disponíveis
+      description: Retorna uma lista completa de todas as fontes de notícias cadastradas na plataforma.
+      operationId: listAllNewsSources
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Sucesso. Retorna a lista de fontes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsSourceListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError' # Corrected indentation
+
+  /news_sources/list_all_attached_sources:
+    get:
+      tags:
+        - News Sources
+      summary: Lista as fontes de notícias associadas ao usuário
+      description: Retorna a lista de fontes que o usuário autenticado marcou como preferidas.
+      operationId: listAttachedNewsSources
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Sucesso. Retorna a lista de fontes associadas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsSourceListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError' # Corrected indentation
+
+  /news_sources/list_all_unattached_sources:
+    get:
+      tags:
+        - News Sources
+      summary: Lista as fontes de notícias não associadas ao usuário
+      description: Retorna as fontes que o usuário autenticado ainda não marcou como preferidas, ideal para uma funcionalidade de "adicionar fonte".
+      operationId: listUnattachedNewsSources
+      security:
+        - cookieAuth: []
+      responses:
+        '200':
+          description: Sucesso. Retorna a lista de fontes não associadas.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsSourceListResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError' # Corrected indentation
+
+  /news_sources/attach:
+    post:
+      tags:
+        - News Sources
+      summary: Associa uma fonte de notícia ao usuário
+      description: Adiciona uma fonte à lista de preferências do usuário autenticado.
+      operationId: attachNewsSource # Corrected indentation
+      security:
+        - cookieAuth: []
+        - csrfAuth: []
+      requestBody:
+        description: ID da fonte a ser associada.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - source_id
+              properties:
+                source_id:
+                  type: integer
+                  description: O ID da fonte de notícia a ser associada.
+                  example: 2
+      responses:
+        '200':
+          description: Fonte associada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '400':
+          $ref: '#/components/responses/BadRequestError' # Corrected indentation
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '404':
+          $ref: '#/components/responses/NotFoundError' # Corrected indentation
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /news_sources/detach/{news_source_id}:
+    delete:
+      tags:
+        - News Sources
+      summary: Desassocia uma fonte de notícia do usuário
+      description: Remove uma fonte da lista de preferências do usuário autenticado.
+      operationId: detachNewsSource
+      security: # Corrected indentation
+        - cookieAuth: []
+        - csrfAuth: []
+      parameters:
+        - name: news_source_id
+          in: path
+          required: true
+          description: O ID da fonte de notícia a ser desassociada.
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Fonte desassociada com sucesso.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError' # Corrected indentation
+        '400': # Added 400 for invalid ID type
+          description: Dados inválidos. O ID da fonte de notícia na URL deve ser um número inteiro válido.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                success: false
+                message: "Dados inválidos."
+                data: null
+                error: "O ID da fonte de notícia na URL deve ser um número inteiro válido."
+        '404':
+          $ref: '#/components/responses/NotFoundError' # Corrected indentation
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    # --- User Schemas ---
+    UserRegister:
+      type: object
+      required: [full_name, email, password]
+      properties:
+        full_name:
+          type: string
+          example: "João da Silva"
+        email:
+          type: string
+          format: email
+          example: "joao.silva@example.com"
+        password:
+          type: string
+          format: password
+          example: "SenhaForte123"
+        birthdate:
+          type: string
+          format: date
+          example: "1990-01-15"
+
+    UserLogin:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: "joao.silva@example.com"
+        password:
+          type: string
+          format: password
+          example: "SenhaForte123"
+
+    UserProfile:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: "João da Silva"
+        email:
+          type: string
+          format: email
+          example: "joao.silva@example.com"
+        birthdate:
+          type: string
+          format: date
+          nullable: true
+          example: "1990-01-15"
+
+    UserProfileUpdate:
+      type: object
+      properties:
+        full_name:
+          type: string
+          example: "João da Silva Santos"
+        email:
+          type: string
+          format: email
+          example: "joao.santos@example.com"
+        birthdate:
+          type: string
+          format: date
+          example: "1990-01-16"
+
+    ChangePassword:
+      type: object
+      required: [new_password]
+      properties:
+        new_password:
+          type: string
+          format: password
+          example: "NovaSenhaForte456"
+
+    UserLoginResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Login bem-sucedido." }
+        data:
+          type: object
+          properties:
+            full_name: { type: string, example: "João da Silva" }
+            email: { type: string, format: email, example: "joao.silva@example.com" }
+        error: { type: 'object', nullable: true }
+
+    UserProfileResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Perfil do usuário recuperado com sucesso." }
+        data:
+          $ref: '#/components/schemas/UserProfile'
+        error: { type: 'object', nullable: true }
+
+    # --- Topic Schemas ---
+    Topic:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        name: { type: string, example: "Tecnologia" }
+        state: { type: integer, example: 1 }
+
+    TopicResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Tópico adicionado com sucesso." }
+        data:
+          type: object
+          properties:
+            topic:
+              $ref: '#/components/schemas/Topic'
+            attached: { type: boolean, example: true }
+        error: { type: 'object', nullable: true }
+
+    TopicListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Tópicos recuperados com sucesso." }
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Topic'
+        error: { type: 'object', nullable: true }
+
+    # --- News Source Schemas ---
+    NewsSource:
+      type: object
+      properties:
+        id: { type: integer, example: 1 }
+        name: { type: string, example: "G1" }
+        url: { type: string, format: uri, example: "https://g1.globo.com" }
+
+    NewsSourceListResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Fontes de notícias listadas com sucesso." }
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/NewsSource'
+        error: { type: 'object', nullable: true }
+
+    # --- Generic Schemas ---
+    SuccessResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: true }
+        message: { type: string, example: "Operação realizada com sucesso." }
+        data: { type: 'object', nullable: true }
+        error: { type: 'object', nullable: true }
+
+    ErrorResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        message: { type: string }
+        data: { type: 'object', nullable: true }
+        error: { type: string }
+
+  responses:
+    BadRequestError:
+      description: Requisição inválida. O corpo da requisição está mal formatado ou faltam campos obrigatórios.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            message: "Dados inválidos."
+            data: null
+            error: "Campo obrigatório ausente: 'email'"
+    UnauthorizedError:
+      description: Erro de autenticação. O token JWT é inválido, expirou ou não foi fornecido.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              msg:
+                type: string
+                example: "Missing cookie 'access_token_cookie'"
+    NotFoundError:
+      description: Recurso não encontrado. O item solicitado (usuário, fonte, tópico, etc.) não existe.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            message: "Recurso não encontrado."
+            data: null
+            error: "Usuário não encontrado."
+    ConflictError:
+      description: Conflito. A operação não pode ser concluída devido a um estado conflitante do recurso (exemplo -> e-mail já em uso).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            message: "Conflito de dados."
+            data: null
+            error: "E-mail já cadastrado"
+    InternalServerError:
+      description: Erro interno do servidor.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            success: false
+            message: "Erro interno do servidor."
+            data: null
+            error: "Ocorreu um erro inesperado."
+
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: access_token_cookie
+      description: |-
+        Autenticação via cookie JWT.
+        **Como usar:** Após o login em `/users/login`, abra as ferramentas de desenvolvedor do navegador (F12), vá em Application > Cookies, copie o valor do cookie `access_token_cookie` e cole aqui.
+    csrfAuth:
+      type: apiKey
+      in: header
+      name: X-CSRF-TOKEN
+      description: |-
+        Token CSRF para proteção. O valor deste cabeçalho deve ser o mesmo do cookie `csrf_access_token`.
+        **Como usar:** Após o login, abra as ferramentas de desenvolvedor do navegador (F12), vá em Application > Cookies, copie o valor do cookie `csrf_access_token` e cole aqui.

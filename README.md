@@ -1,133 +1,73 @@
 # Synapse
 
-NewsHub é um projeto de agregador de notícias desenvolvido para a disciplina de Métodos de Desenvolvimento de Software. A arquitetura é composta por um backend em Flask (Python) e um frontend em React (JavaScript), orquestrados com Docker.
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow.svg)
+![GitHub contributors](https://img.shields.io/github/contributors/unb-mds/2025-2-Synapse.svg)
+![GitHub issues](https://img.shields.io/github/issues/unb-mds/2025-2-Synapse.svg)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/unb-mds/2025-2-Synapse.svg)
+![GitHub license](https://img.shields.io/github/license/unb-mds/2025-2-Synapse.svg)
 
-## Pré-requisitos
+![Python](https://img.shields.io/badge/Python-3776AB.svg?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-000000.svg?logo=flask&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A.svg?logo=react&logoColor=61DAFB)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1.svg?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED.svg?logo=docker&logoColor=white)
 
-Antes de começar, garanta que você tenha as seguintes ferramentas instaladas em sua máquina:
+Synapse é um projeto de agregador de notícias inteligente, projetado para combater o excesso de informação e oferecer uma experiência de leitura rápida e personalizada. A plataforma utiliza uma API de notícias para descobrir artigos, IA para gerar resumos, e um sistema de recomendação que aprende com as interações do usuário para customizar o feed de notícias.
 
-- **Git**: Para clonar o repositório.
-- **Docker e Docker Compose**: Para rodar o ambiente de desenvolvimento de forma conteinerizada.
-- **Python 3.12+** e **pip**: Necessário apenas para o desenvolvimento local do backend.
-- **Node.js e npm**: Necessário apenas para o desenvolvimento local do frontend.
+Desenvolvido com um back-end em Flask (Python) e um front-end em React, o sistema é totalmente containerizado com Docker para garantir um ambiente de desenvolvimento e implantação consistente.
 
----
+## ✨ Principais Funcionalidades
 
-## Como Rodar o Projeto (Docker - Método Recomendado)
+* **Coleta Automatizada:** Um job diário busca e enriquece notícias de fontes globais usando a GNews API e web scraping.
+* **Feed Personalizado:** Os utilizadores podem gerir tópicos de interesse e fontes de notícias preferidas para customizar o seu feed.
+* **Gestão de Conta:** Sistema completo de autenticação, visualização e edição de perfil.
+* **(Futuro) Resumos com IA:** Geração de resumos concisos para otimizar o tempo de leitura.
+* **(Futuro) Newsletter Diária:** Envio de um e-mail personalizado com as notícias mais relevantes para o utilizador.
 
-Este é o método mais simples e rápido para ter todo o ambiente (backend, frontend e banco de dados) funcionando, sem a necessidade de instalar Python ou Node.js diretamente na sua máquina.
+## 🚀 Stack de Tecnologias
+
+| Camada | Tecnologia |
+| :--- | :--- |
+| **Front-end** | React.js, Vite, Tailwind CSS |
+| **Back-end** | Python, Flask, SQLAlchemy |
+| **Base de Dados** | PostgreSQL |
+| **Infraestrutura** | Docker, Docker Compose |
+| **Coleta de Dados**| GNews API, Newspaper3k |
+
+## 🏁 Como Rodar o Projeto (Ambiente Docker)
+
+**Pré-requisitos:**
+* Git
+* Docker e Docker Compose
 
 1.  **Clone o repositório:**
-
     ```sh
-    git clone https://github.com/unb-mds/NewsHub.git
-    cd NewsHub
+    git clone [https://github.com/unb-mds/2025-2-Synapse.git](https://github.com/unb-mds/2025-2-Synapse.git)
+    cd 2025-2-Synapse
     ```
 
-2.  **Crie o arquivo de ambiente:**
-    Copie o arquivo de exemplo `.env.example` para um novo arquivo chamado `.env`. O Docker Compose usará este arquivo para obter as credenciais do banco de dados.
+2.  **Configure as Variáveis de Ambiente:**
+    Crie um ficheiro `.env` na raiz do projeto para o back-end e as chaves de API. Pode usar o `.env.example` como base.
 
+3.  **Configure o Ambiente do Front-end:**
+    O front-end precisa saber onde a API do back-end está a ser executada.
+    * Na pasta `frontend/`, crie um ficheiro chamado `.env`.
+    * Adicione a seguinte linha a este ficheiro:
+        ```env
+        VITE_API_BASE_URL=http://localhost:5001
+        ```
+    Este ficheiro não deve ser versionado (já está no `.gitignore`) para garantir que cada programador possa ter a sua própria configuração local.
+
+4.  **Suba os contentores:**
+    Este comando irá construir as imagens e iniciar todos os serviços.
     ```sh
-    # No Windows (CMD):
-    copy .env.example .env
-    # No Linux / macOS / WSL:
-    cp .env.example .env
-    ```
-
-3.  **Suba os contêineres:**
-    Este comando irá construir as imagens do backend e frontend e iniciar todos os serviços em segundo plano (`-d`).
-
-    ```sh
-    # No Windows (CMD/PowerShell):
-    docker-compose up --build -d
-    # No Linux (Bash/Zsh):
     docker compose up --build -d
     ```
 
-4.  **Inicialize o Banco de Dados:**
-    Com os contêineres em execução, execute o comando abaixo uma única vez para criar as tabelas no banco de dados.
-
-    ```sh
-    docker-compose exec backend flask init-db
-    ```
-
-5.  **Pronto!**
-    A aplicação estará disponível nos seguintes endereços:
-    - **Frontend (React)**: http://localhost:5173
-    - **Backend (Flask API)**: http://localhost:5001
-
----
-
-## Desenvolvimento Local (Alternativo - Ambiente Virtual)
-
-Use este método se preferir rodar os serviços diretamente na sua máquina, sem Docker. Você precisará de uma instância do PostgreSQL rodando localmente.
-
-### 1. Backend (Python/Flask)
-
-**a. Crie e ative o ambiente virtual (`.venv`)**
-
-Abra o terminal na raiz do projeto (`NewsHub/`).
-
-- **Windows (CMD / PowerShell):**
-
-  ```shell
-  # Criar o ambiente
-  python -m venv .venv
-
-  # Ativar no CMD
-  .\.venv\Scripts\activate
-
-  # Ativar no PowerShell (pode exigir permissão de execução de scripts)
-  .\.venv\Scripts\Activate.ps1
-  ```
-
-- **Linux / macOS / WSL (Windows Subsystem for Linux):**
-
-  ```shell
-  # Criar o ambiente
-  python3 -m venv .venv
-
-  # Ativar
-  source .venv/bin/activate
-  ```
-
-**b. Instale as dependências**
-
-Com o ambiente virtual ativado, instale os pacotes Python:
-
-```shell
-pip install -r backend/requirements.txt
-```
-
-**c. Configure e inicie o backend**
-
-1.  Crie um arquivo `.env` na raiz do projeto e adicione a URL de conexão do seu banco de dados PostgreSQL local.
-    Para que os comandos `flask` funcionem da raiz do projeto, **é essencial adicionar a variável `FLASK_APP`**.
-    ```
-    # Exemplo de conteúdo para o arquivo .env
-    FLASK_APP=backend.app.main
-    DATABASE_URL=postgresql+psycopg://SEU_USUARIO:SUA_SENHA@localhost:5432/SEU_BANCO
-    ```
-2.  Com o ambiente virtual ativado, execute os comandos a partir da **raiz do projeto**:
-
-    Inicialize o banco de dados:
-
-    ```shell
-    flask init-db
-    ```
-
-    Inicie o servidor Flask:
-
-    ```shell
-    flask run --port 5001
-    ```
-
-### 2. Frontend (React/Vite)
-
-1.  Em um **novo terminal**, navegue até a pasta do frontend: `cd frontend`
-2.  Instale as dependências do Node.js: `npm install`
-3.  Inicie o servidor de desenvolvimento: `npm run dev`
-4.  O frontend estará disponível em http://localhost:5173.
+5.  **Pronto!** A aplicação estará disponível em:
+    * **Frontend (React):** `http://localhost:5173`
+    * **Backend (Flask API):** `http://localhost:5001`
+    * **Documentação da API (Swagger):** `http://localhost:5001/api/docs`
 
 ## Equipe de Desenvolvimento
 
@@ -135,3 +75,13 @@ pip install -r backend/requirements.txt
 | :---: | :---: | :---: |
 | <img src="https://github.com/ArthurDevWorks.png" width="100px;" style="border-radius: 10px;" alt="Arthur Parente"><br><a href="https://github.com/ArthurDevWorks">Arthur Parente</a> | <img src="https://github.com/Sismene7.png" width="100px;" style="border-radius: 10px;" alt="Arthur Sismene"><br><a href="https://github.com/Sismene7">Arthur Sismene</a> | <img src="https://github.com/Dgprogramas.png" width="100px;" style="border-radius: 10px;" alt="Diogo Alves"><br><a href="https://github.com/Dgprogramas">Diogo Alves</a> |
 | <img src="https://github.com/gccintra.png" width="100px;" height="100px" style="border-radius: 10px;" alt="Gustavo Cintra"><br><a href="https://github.com/gccintra">Gustavo Cintra</a> | <img src="https://github.com/g-srodrigues.png" width="100px;" style="border-radius: 10px;" alt="Gustavo Rodrigues"><br><a href="https://github.com/g-srodrigues">Gustavo Rodrigues</a> | <img src="https://github.com/ItaloSamP.png" width="100px;" style="border-radius: 10px;" alt="Ítalo Alves"><br><a href="https://github.com/ItaloSamP">Ítalo Alves</a> |
+
+## 🤝 Como Contribuir
+Este é um projeto de código aberto e adoraríamos receber a sua contribuição! Para saber como, por favor leia o nosso **[Guia de Contribuição](CONTRIBUTING.md)**.
+
+## 📜 Código de Conduta
+Para garantir uma comunidade acolhedora e inclusiva, esperamos que todos os participantes sigam o nosso **[Código de Conduta](CODE_OF_CONDUCT.md)**.
+
+## 📄 Licença
+Este projeto está licenciado sob a Licença MIT. Veja o ficheiro [LICENSE](LICENSE) para mais detalhes.
+
