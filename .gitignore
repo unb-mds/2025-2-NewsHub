@@ -2,8 +2,12 @@
 __pycache__/
 *.pyc
 .env
+venv
 .venv
+venv
 .pytest_cache/
+
+.coverage
 
 # Arquivos do VSCode
 .vscode/
@@ -11,3 +15,4 @@ __pycache__/
 # Arquivos do Mac
 .DS_Store
 frontend/node_modules/
+

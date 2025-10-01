@@ -1,0 +1,17 @@
+FROM python:3.12-slim
+
+RUN apt-get update && apt-get -y install --no-install-recommends cron && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+
+COPY . .
+
+RUN mv /app/crontab /etc/cron.d/news-collection-job && \
+    chmod 0644 /etc/cron.d/news-collection-job
+ 
+RUN touch /var/log/cron.log
+
+CMD ["/bin/sh", "-c", "printenv | grep -E 'DATABASE_URL|GNEWS_API_KEY' > /etc/environment && echo 'PYTHONPATH=/app' >> /etc/environment && cron && tail -f /var/log/cron.log"]
